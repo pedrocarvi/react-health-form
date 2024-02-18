@@ -1,0 +1,14 @@
+.form-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: 0px 10px;
+  gap: 15px;
+}
+
+.form-container form .form-group {
+  width: 100%;
+}
