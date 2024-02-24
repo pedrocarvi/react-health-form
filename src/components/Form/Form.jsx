@@ -34,44 +34,65 @@ const Form = () => {
         console.log("Datos usuario: ", datosUsuario)
         const pesoKg = parseFloat(datosUsuario.peso);
         const alturaCm = datosUsuario.altura
-        const alturaM = parseFloat(datosUsuario.altura) / 100;
-        // const imc = pesoKg / (alturaM * alturaM);
-        // const metabolismoBasal = calcularMetabolismoBasal();
-        // const porcentajeGrasa = calcularPorcentajeGrasa();
-        // const cantidadGrasa = calcularCantidadGrasa();
-        // const cantidadMusculo = calcularCantidadMusculo();
-        // const proteinaNecesaria = calcularProteinaNecesaria();
+        const metabolismoBasal = calcularMetabolismoBasal();
+        const porcentajeGrasa = calcularPorcentajeGrasa();
+        const cantidadGrasa = calcularCantidadGrasa(porcentajeGrasa);
+        const cantidadMusculo = calcularCantidadMusculo(pesoKg, cantidadGrasa);
+        const proteinaNecesaria = calcularProteinaNecesaria(cantidadMusculo);
 
-        // Actualizar resultados
         setResultados({
-            // imc: imc.toFixed(2),
-            // metabolismoBasal: metabolismoBasal.toFixed(2),
-            // porcentajeGrasa: porcentajeGrasa.toFixed(2),
-            // cantidadGrasa: cantidadGrasa.toFixed(2),
-            // cantidadMusculo: cantidadMusculo.toFixed(2),
-            // proteinaNecesaria: proteinaNecesaria.toFixed(2)
+            imc: (pesoKg / Math.pow(alturaCm / 100, 2)).toFixed(2),
+            metabolismoBasal: metabolismoBasal.toFixed(2),
+            porcentajeGrasa: porcentajeGrasa.toFixed(2),
+            cantidadGrasa: cantidadGrasa.toFixed(2),
+            cantidadMusculo: cantidadMusculo.toFixed(2),
+            proteinaNecesaria: proteinaNecesaria.toFixed(2)
         });
     };
 
-    // const calcularMetabolismoBasal = () => {
-    //     // Implementa aquí el cálculo del metabolismo basal
-    // };
+    const calcularMetabolismoBasal = () => {
+        const { sexo, edad, altura, peso } = datosUsuario;
+        if (sexo === "Hombre") {
+            return 66.5 + (13.8 * peso) + (5 * altura) - (6.8 * edad);
+        } else {
+            return 655 + (9.6 * peso) + (1.85 * altura) - (4.7 * edad);
+        }
+    };
 
-    // const calcularPorcentajeGrasa = () => {
-    //     // Implementa aquí el cálculo del % de grasa
-    // };
+    const calcularPorcentajeGrasa = () => {
+        const { sexo, cintura, cuello, altura } = datosUsuario;
+        if (sexo === "Hombre") {
+            return 495 / (1.0324 - (0.19077 * Math.log(cintura - cuello)) + (0.15456 * Math.log(altura))) - 450;
+        } else {
+            return 495 / (1.29579 - (0.35004 * Math.log(cintura - cuello + parseFloat(datosUsuario.cadera))) + (0.221 * Math.log(altura))) - 450;
+        }
+    };
 
-    // const calcularCantidadGrasa = () => {
-    //     // Implementa aquí el cálculo de la cantidad de grasa
-    // };
+    const calcularCantidadGrasa = (porcentajeGrasa) => {
+        return parseFloat(datosUsuario.peso) * (porcentajeGrasa / 100);
+    };
 
-    // const calcularCantidadMusculo = () => {
-    //     // Implementa aquí el cálculo de la cantidad de músculo
-    // };
+    const calcularCantidadMusculo = (peso, cantidadGrasa) => {
+        const { sexo } = datosUsuario;
+        if (sexo === "Hombre") {
+            return peso - cantidadGrasa - 3.1;
+        } else {
+            return peso - cantidadGrasa - 2.5;
+        }
+    };
 
-    // const calcularProteinaNecesaria = () => {
-    //     // Implementa aquí el cálculo de la proteína necesaria por día
-    // };
+    const calcularProteinaNecesaria = (cantidadMusculo) => {
+        const { nivelActividad } = datosUsuario;
+        if (nivelActividad === "alta") {
+            return cantidadMusculo * 2.2;
+        } else if (nivelActividad === "media") {
+            return cantidadMusculo * 1.8;
+        } else if (nivelActividad === "baja") {
+            return cantidadMusculo * 1.2;
+        } else {
+            return 0;
+        }
+    };
 
     return (
         <div className="form-container">
@@ -195,6 +216,15 @@ const Form = () => {
                     Enviar
                 </button>
             </form>
+            <div className="resultados">
+                <h2>Resultados</h2>
+                <p>IMC: {resultados.imc}</p>
+                <p>Metabolismo Basal: {resultados.metabolismoBasal}</p>
+                <p>% de Grasa: {resultados.porcentajeGrasa}</p>
+                <p>Kg de Grasa: {resultados.cantidadGrasa}</p>
+                <p>Kg de Músculo: {resultados.cantidadMusculo}</p>
+                <p>Proteína Necesaria: {resultados.proteinaNecesaria}</p>
+            </div>
         </div>
     );
 };
