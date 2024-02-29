@@ -24,18 +24,17 @@ const SocialInfo = () => {
         }
     ]
     return (
+        /*
         <div className='social-info-container'>
-            {/* Logo */}
             <img src={logoComunidad} alt="Logo de la comunidad" className='logo-comunidad' />
             <h2> Comunidad Si Se Puede </h2>
             <div>
                 <p> Descubri nuestro escaner virtual donde podas medir tu salud en menos de 1 minuto!</p>
             </div>
-            {/* Social */}
             <div className="social-container d-flex">
                 {
-                    redes.map((el) => (
-                        <div className="d-flex flex-column justify-content-center align-items-center px-4">
+                    redes.map((el, index) => (
+                        <div key={index} className="d-flex flex-column justify-content-center align-items-center px-4">
                             <a href={el.link}>
                                 <img src={el.imagen} alt={el.nombre} width={30} />
                                 <p> {el.nombre} </p>
@@ -44,6 +43,29 @@ const SocialInfo = () => {
                     ))
                 }
             </div>
+        </div>
+        */
+        <div>
+            <nav className="navbar bg-body-emphasis py-3 border">
+                <div className="container-fluid">
+                    <div className='d-flex gap-2 align-items-center'>
+                        <img src={logoComunidad} alt="Logo de la comunidad" className='logo-comunidad' />
+                        <h5> Comunidad Si Se Puede </h5>
+                    </div>
+                    <div className="social-container d-flex">
+                        {
+                            redes.map((el, index) => (
+                                <div key={index} className="d-flex justify-content-center align-items-center px-4">
+                                    <a href={el.link}>
+                                        <img src={el.imagen} alt={el.nombre} width={30} />
+                                        <p> {el.nombre} </p>
+                                    </a>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </nav>
         </div>
     )
 }
