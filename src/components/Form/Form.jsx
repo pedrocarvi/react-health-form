@@ -3,6 +3,8 @@ import './form.css'
 
 const Form = () => {
 
+    const [formSent, setFormSent] = useState(false)
+
     const [datosUsuario, setDatosUsuario] = useState({
         nombre: '',
         sexo: '',
@@ -47,11 +49,12 @@ const Form = () => {
             cantidadMusculo: cantidadMusculo.toFixed(2),
             proteinaNecesaria: proteinaNecesaria.toFixed(2)
         });
+        setFormSent(true)
     };
 
     const calcularMetabolismoBasal = () => {
         const { sexo, edad, altura, peso } = datosUsuario;
-        if (sexo === "Hombre") {
+        if (sexo === "H") {
             return 66.5 + (13.8 * peso) + (5 * altura) - (6.8 * edad);
         } else {
             return 655 + (9.6 * peso) + (1.85 * altura) - (4.7 * edad);
@@ -67,13 +70,11 @@ const Form = () => {
         const caderaNum = parseFloat(cadera);
 
         if (sexo === "H") {
-            return 495 / (1.0324 - (0.19077 * Math.log(cinturaNum - cuelloNum)) + (0.15456 * Math.log(alturaNum))) - 450;
-        } else if (sexo === "M") {
-            return 495 / (1.29579 - (0.35004 * Math.log(cinturaNum - cuelloNum + caderaNum)) + (0.221 * Math.log(alturaNum))) - 450;
+            return (495 / (1.0324 - 0.19077 * Math.log10(cinturaNum - cuelloNum) + 0.15456 * Math.log10(alturaNum))) - 450
+        } else {
+            return (495 / (1.29579 - 0.35004 * Math.log10(cinturaNum + caderaNum - cuelloNum) + 0.22100 * Math.log10(alturaNum))) - 450
         }
-
     };
-
 
     const calcularCantidadGrasa = (porcentajeGrasa) => {
         return parseFloat(datosUsuario.peso) * (porcentajeGrasa / 100);
@@ -91,11 +92,11 @@ const Form = () => {
     const calcularProteinaNecesaria = (cantidadMusculo) => {
         const { nivelActividad } = datosUsuario;
         if (nivelActividad === "alta") {
-            return cantidadMusculo * 2.2;
+            return cantidadMusculo * 2.5;
         } else if (nivelActividad === "media") {
-            return cantidadMusculo * 1.8;
+            return cantidadMusculo * 1.3;
         } else if (nivelActividad === "baja") {
-            return cantidadMusculo * 1.2;
+            return cantidadMusculo * 1;
         } else {
             return 0;
         }
@@ -112,6 +113,7 @@ const Form = () => {
                         <input
                             type="text"
                             name="nombre"
+                            placeholder='Ingrese su nombre'
                             className="form-control"
                             value={datosUsuario.nombre}
                             onChange={handleChange}
@@ -139,6 +141,7 @@ const Form = () => {
                         <input
                             type="number"
                             name="edad"
+                            placeholder='Ingrese su edad'
                             className="form-control"
                             value={datosUsuario.edad}
                             onChange={handleChange}
@@ -151,6 +154,7 @@ const Form = () => {
                         <input
                             type="number"
                             name="altura"
+                            placeholder='Ingrese su altura (cm)'
                             className="form-control"
                             value={datosUsuario.altura}
                             onChange={handleChange}
@@ -163,6 +167,7 @@ const Form = () => {
                         <input
                             type="number"
                             name="peso"
+                            placeholder='Ingrese su peso (kg)'
                             className="form-control"
                             value={datosUsuario.peso}
                             onChange={handleChange}
@@ -175,6 +180,7 @@ const Form = () => {
                         <input
                             type="number"
                             name="cintura"
+                            placeholder='Ingrese las medidas de su cintura (cm)'
                             className="form-control"
                             value={datosUsuario.cintura}
                             onChange={handleChange}
@@ -187,6 +193,7 @@ const Form = () => {
                         <input
                             type="number"
                             name="cuello"
+                            placeholder='Ingrese las medidas de su cuello (cm)'
                             className="form-control"
                             value={datosUsuario.cuello}
                             onChange={handleChange}
@@ -199,6 +206,7 @@ const Form = () => {
                         <input
                             type="number"
                             name="cadera"
+                            placeholder='Ingrese las medidas de su cadera (cm)'
                             className="form-control"
                             value={datosUsuario.cadera}
                             onChange={handleChange}
@@ -229,31 +237,48 @@ const Form = () => {
             <div className="resultados">
                 <h4 className='pb-4'>Resultados</h4>
                 <div className='result-ctn'>
-                    <b> IMC: </b>
-                    <p> {resultados.imc}</p>
+                    <div> <b> IMC (Indice de Masa Corporal): </b> {resultados.imc} </div>
+                    {formSent && resultados.imc && (
+                        <p>
+                            {resultados.imc < 15 ? 'Está muy bajo (demasiado bajo)' :
+                                resultados.imc >= 15 && resultados.imc <= 25 ? 'Está en un rango saludable' :
+                                    resultados.imc > 25 && 'Está muy alto (demasiado alto)'}
+                        </p>
+                    )}
                 </div>
                 <div className='result-ctn'>
-                    <b> Metabolismo Basal: </b>
-                    <p> {resultados.metabolismoBasal}</p>
+                    <div> <b> Metabolismo basal: </b> {resultados.metabolismoBasal} </div>
+                    {/* <b> Metabolismo Basal: </b>
+                    <p> {resultados.metabolismoBasal}</p> */}
                 </div>
                 <div className='result-ctn'>
-                    <b> % De Grasa: </b>
-                    <p> {resultados.porcentajeGrasa}</p>
+                    <div> <b> % De Grasa: </b> {resultados.porcentajeGrasa} </div>
+                    {formSent && resultados.porcentajeGrasa && (
+                        <p>
+                            {resultados.porcentajeGrasa < 15 ? 'Está muy bajo (demasiado bajo)' :
+                                resultados.porcentajeGrasa >= 15 && resultados.porcentajeGrasa <= 25 ? 'Está en un rango saludable' :
+                                    resultados.porcentajeGrasa > 25 && 'Está muy alto (demasiado alto)'}
+                        </p>
+                    )}
+                    {/* <b> % De Grasa: </b>
+                    <p> {resultados.porcentajeGrasa}</p> */}
                 </div>
                 <div className='result-ctn'>
-                    <b> KG De Grasa: </b>
-                    <p> {resultados.cantidadGrasa}</p>
+                    <div> <b> Kg De Grasa: </b> {resultados.cantidadGrasa} </div>
+                    {/* <b> KG De Grasa: </b>
+                    <p> {resultados.cantidadGrasa}</p> */}
                 </div>
                 <div className='result-ctn'>
-                    <b> KG De Musculo: </b>
-                    <p> {resultados.cantidadMusculo}</p>
+                    <div> <b> Kg De Musculo: </b> {resultados.cantidadMusculo} </div>
+                    {/* <b> KG De Musculo: </b>
+                    <p> {resultados.cantidadMusculo}</p> */}
                 </div>
                 <div className='result-ctn'>
-                    <b> Proteina Diaria Necesaria: </b>
-                    <p> {resultados.proteinaNecesaria}</p>
+                    <div> <b> Proteina diaria necesaria: </b> {resultados.proteinaNecesaria} gramos </div>
+                    {/* <b> Proteina Diaria Necesaria: </b>
+                    <p> {resultados.proteinaNecesaria}</p> */}
                 </div>
             </div>
-
         </div>
     );
 };
