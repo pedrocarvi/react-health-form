@@ -1,5 +1,5 @@
 .form-container {
-  width: 1150px;
+  width: 100%;
   max-width: 1150px;
   margin: 0 auto;
   display: flex;
@@ -74,4 +74,35 @@ h4 {
 
 .result-ctn p {
   margin-bottom: 0px;
+}
+
+@media screen and (max-width: 768px) {
+  .form-container {
+    width: 90%;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0px;
+  }
+  .formulario {
+    width: 100%;
+    border: none;
+    padding: 0;
+    padding-bottom: 30px;
+  }
+  .resultados {
+    width: 100%;
+    padding-bottom: 40px;
+  }
+
+  .form-container form {
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .resultados h4 {
+    text-align: center;
+    padding-bottom: 10px !important;
+  }
 }

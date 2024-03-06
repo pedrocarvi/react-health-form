@@ -11,40 +11,9 @@ const SocialInfo = () => {
             nombre: "Sitio web",
             imagen: webIcon,
             link: "www.google.com"
-        },
-        {
-            nombre: "Instagram",
-            imagen: instagramIcon,
-            link: "www.google.com"
-        },
-        {
-            nombre: "Youtube",
-            imagen: youtubeIcon,
-            link: "www.google.com"
         }
     ]
     return (
-        /*
-        <div className='social-info-container'>
-            <img src={logoComunidad} alt="Logo de la comunidad" className='logo-comunidad' />
-            <h2> Comunidad Si Se Puede </h2>
-            <div>
-                <p> Descubri nuestro escaner virtual donde podas medir tu salud en menos de 1 minuto!</p>
-            </div>
-            <div className="social-container d-flex">
-                {
-                    redes.map((el, index) => (
-                        <div key={index} className="d-flex flex-column justify-content-center align-items-center px-4">
-                            <a href={el.link}>
-                                <img src={el.imagen} alt={el.nombre} width={30} />
-                                <p> {el.nombre} </p>
-                            </a>
-                        </div>
-                    ))
-                }
-            </div>
-        </div>
-        */
         <div>
             <nav className="navbar bg-body-emphasis py-3 border">
                 <div className="container-fluid">
