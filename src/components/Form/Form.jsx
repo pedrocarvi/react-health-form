@@ -55,9 +55,9 @@ const Form = () => {
     const calcularMetabolismoBasal = () => {
         const { sexo, edad, altura, peso } = datosUsuario;
         if (sexo === "H") {
-            return 66.5 + (13.8 * peso) + (5 * altura) - (6.8 * edad);
+            return 66 + (13.7 * peso) + (5 * altura) - (6.8 * edad);
         } else {
-            return 655 + (9.6 * peso) + (1.85 * altura) - (4.7 * edad);
+            return 655 + (9.6 * peso) + (1.8 * altura) - (4.7 * edad);
         }
     };
 
