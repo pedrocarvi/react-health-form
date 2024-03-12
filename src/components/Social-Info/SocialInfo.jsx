@@ -10,7 +10,7 @@ const SocialInfo = () => {
         {
             nombre: "Sitio web",
             imagen: webIcon,
-            link: "www.google.com"
+            link: "https://www.comunidadsisepuede.online/"
         }
     ]
     return (
@@ -25,7 +25,7 @@ const SocialInfo = () => {
                         {
                             redes.map((el, index) => (
                                 <div key={index} className="d-flex justify-content-center align-items-center px-4">
-                                    <a href={el.link}>
+                                    <a href={el.link} target='_blank'>
                                         <img src={el.imagen} alt={el.nombre} width={30} />
                                         <p> {el.nombre} </p>
                                     </a>

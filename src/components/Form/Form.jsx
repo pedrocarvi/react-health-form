@@ -70,9 +70,9 @@ const Form = () => {
         const caderaNum = parseFloat(cadera);
 
         if (sexo === "H") {
-            return (495 / (1.0324 - 0.19077 * Math.log10(cinturaNum - cuelloNum) + 0.15456 * Math.log10(alturaNum))) - 450
+            return (495 / (1.0324 - 0.19077 * Math.log10(cinturaNum - cuelloNum) + 0.15456 * Math.log10(alturaNum))) - 451.7
         } else {
-            return (495 / (1.29579 - 0.35004 * Math.log10(cinturaNum + caderaNum - cuelloNum) + 0.22100 * Math.log10(alturaNum))) - 450
+            return (495 / (1.29579 - 0.35004 * Math.log10(cinturaNum + caderaNum - cuelloNum) + 0.22100 * Math.log10(alturaNum))) - 451.7
         }
     };
 
