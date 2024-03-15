@@ -70,9 +70,9 @@ const Form = () => {
         const caderaNum = parseFloat(cadera);
 
         if (sexo === "H") {
-            return (495 / (1.0324 - 0.19077 * Math.log10(cinturaNum - cuelloNum) + 0.15456 * Math.log10(alturaNum))) - 451.7
+            return (495 / (1.0324 - 0.19077 * Math.log10(cinturaNum - cuelloNum) + 0.15456 * Math.log10(alturaNum))) - 451
         } else {
-            return (495 / (1.29579 - 0.35004 * Math.log10(cinturaNum + caderaNum - cuelloNum) + 0.22100 * Math.log10(alturaNum))) - 451.7
+            return (495 / (1.29579 - 0.35004 * Math.log10(cinturaNum + caderaNum - cuelloNum) + 0.22100 * Math.log10(alturaNum))) - 451
         }
     };
 
@@ -92,11 +92,11 @@ const Form = () => {
     const calcularProteinaNecesaria = (cantidadMusculo) => {
         const { nivelActividad } = datosUsuario;
         if (nivelActividad === "alta") {
-            return cantidadMusculo * 2.5;
+            return cantidadMusculo * 2.2;
         } else if (nivelActividad === "media") {
-            return cantidadMusculo * 1.3;
+            return cantidadMusculo * 1.5;
         } else if (nivelActividad === "baja") {
-            return cantidadMusculo * 1;
+            return cantidadMusculo * 1.2;
         } else {
             return 0;
         }
@@ -224,9 +224,9 @@ const Form = () => {
                             autoComplete='off'
                         >
                             <option value="">Seleccione un nivel</option>
-                            <option value="alta">Alta</option>
-                            <option value="media">Media</option>
-                            <option value="baja">Baja</option>
+                            <option value="alta">Alta (5 o más entrenamientos por semana)</option>
+                            <option value="media">Media (3 entrenamientos por semana)</option>
+                            <option value="baja">Baja (Casi sedentario)</option>
                         </select>
                     </div>
                     <button type="submit" className="btn enviar-btn">
@@ -263,11 +263,9 @@ const Form = () => {
                     {/* <b> % De Grasa: </b>
                     <p> {resultados.porcentajeGrasa}</p> */}
                 </div>
-                <div className='result-ctn'>
+                {/* <div className='result-ctn'>
                     <div> <b> Kg De Grasa: </b> {resultados.cantidadGrasa} </div>
-                    {/* <b> KG De Grasa: </b>
-                    <p> {resultados.cantidadGrasa}</p> */}
-                </div>
+                </div> */}
                 <div className='result-ctn'>
                     <div> <b> Kg De Musculo: </b> {resultados.cantidadMusculo} </div>
                     {/* <b> KG De Musculo: </b>
@@ -277,6 +275,9 @@ const Form = () => {
                     <div> <b> Proteina diaria necesaria: </b> {resultados.proteinaNecesaria} gramos </div>
                     {/* <b> Proteina Diaria Necesaria: </b>
                     <p> {resultados.proteinaNecesaria}</p> */}
+                </div>
+                <div className='result-ctn'>
+                    <div> <b> Hidratación diaria: </b> {(datosUsuario.peso * 0.04).toFixed(1)} litros </div>
                 </div>
             </div>
         </div>
