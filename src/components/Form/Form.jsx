@@ -4,6 +4,7 @@ import './form.css'
 const Form = () => {
 
     const [formSent, setFormSent] = useState(false)
+    const [litrosDia, setLitrosDia] = useState(0)
 
     const [datosUsuario, setDatosUsuario] = useState({
         nombre: '',
@@ -14,7 +15,8 @@ const Form = () => {
         cintura: '',
         cuello: '',
         cadera: '',
-        nivelActividad: ''
+        hidratacion: '',
+        nivelActividad: '',
     });
 
     const [resultados, setResultados] = useState({
@@ -23,7 +25,8 @@ const Form = () => {
         porcentajeGrasa: '',
         cantidadGrasa: '',
         cantidadMusculo: '',
-        proteinaNecesaria: ''
+        hidratacionNecesaria: '',
+        proteinaNecesaria: '',
     });
 
     const handleChange = (e) => {
@@ -41,15 +44,22 @@ const Form = () => {
         const cantidadGrasa = calcularCantidadGrasa(porcentajeGrasa);
         const cantidadMusculo = calcularCantidadMusculo(pesoKg, cantidadGrasa);
         const proteinaNecesaria = calcularProteinaNecesaria(cantidadMusculo);
+        setLitrosDia((datosUsuario.hidratacion * 250) / 1000) // cuanto toma
+        const hidratacionNecesaria = calcularHidratacionDiaria(pesoKg); // cuanto necesita tomar
         setResultados({
             imc: (pesoKg / Math.pow(alturaCm / 100, 2)).toFixed(2),
             metabolismoBasal: metabolismoBasal.toFixed(2),
             porcentajeGrasa: porcentajeGrasa.toFixed(2),
             cantidadGrasa: cantidadGrasa.toFixed(2),
             cantidadMusculo: cantidadMusculo.toFixed(2),
-            proteinaNecesaria: proteinaNecesaria.toFixed(2)
+            proteinaNecesaria: proteinaNecesaria.toFixed(2),
+            hidratacionNecesaria: hidratacionNecesaria.toFixed(1)
         });
         setFormSent(true)
+        console.log("Datos usuario: ", datosUsuario)
+        console.log("Resultados", resultados);
+        console.log("litros que toma por dia", litrosDia)
+        console.log("litros que debe tomar", resultados.hidratacionNecesaria)
     };
 
     const calcularMetabolismoBasal = () => {
@@ -80,6 +90,10 @@ const Form = () => {
         return parseFloat(datosUsuario.peso) * (porcentajeGrasa / 100);
     };
 
+    const calcularHidratacionDiaria = (peso) => {
+        return peso * 0.04
+    }
+
     const calcularCantidadMusculo = (peso, cantidadGrasa) => {
         const { sexo } = datosUsuario;
         if (sexo === "Hombre") {
@@ -101,6 +115,52 @@ const Form = () => {
             return 0;
         }
     };
+
+    function getPercentageGrasaColor() {
+        const { sexo, edad } = datosUsuario;
+        const { porcentajeGrasa } = resultados;
+
+        if (sexo === "H") {
+            if (edad > 18 && edad <= 39) {
+                if (porcentajeGrasa < 8) return '#F7BF09'; // amarillo
+                if (porcentajeGrasa >= 8 && porcentajeGrasa < 20) return '#008640'; // verde
+                if (porcentajeGrasa >= 20 && porcentajeGrasa < 26) return '#FF5E00'; // naranja
+                if (porcentajeGrasa >= 26) return 'red';
+            } else if (edad > 39 && edad <= 59) {
+                if (porcentajeGrasa < 11) return '#F7BF09'; // amarillo
+                if (porcentajeGrasa >= 11 && porcentajeGrasa < 22) return '#008640'; // verde
+                if (porcentajeGrasa >= 22 && porcentajeGrasa < 30) return '#FF5E00'; // naranja
+                if (porcentajeGrasa >= 30) return 'red';
+            } else if (edad > 59) {
+                if (porcentajeGrasa < 13) return '#F7BF09'; // amarillo
+                if (porcentajeGrasa >= 13 && porcentajeGrasa < 31) return '#008640'; // verde
+                if (porcentajeGrasa >= 31 && porcentajeGrasa < 37) return '#FF5E00'; // naranja
+                if (porcentajeGrasa >= 37) return 'red';
+            }
+        }
+
+        if (sexo === "M") {
+            if (edad > 18 && edad <= 39) {
+                if (porcentajeGrasa < 21) return '#F7BF09'; // amarillo
+                if (porcentajeGrasa >= 21 && porcentajeGrasa < 33) return '#008640'; // verde
+                if (porcentajeGrasa >= 33 && porcentajeGrasa < 39) return '#FF5E00'; // naranja
+                if (porcentajeGrasa >= 39) return 'red';
+            } else if (edad > 39 && edad <= 59) {
+                if (porcentajeGrasa < 23) return '#F7BF09'; // amarillo
+                if (porcentajeGrasa >= 23 && porcentajeGrasa < 34) return '#008640'; // verde
+                if (porcentajeGrasa >= 34 && porcentajeGrasa < 40) return '#FF5E00'; // naranja
+                if (porcentajeGrasa >= 40) return 'red';
+            } else if (edad > 59) {
+                if (porcentajeGrasa < 24) return '#F7BF09'; // amarillo
+                if (porcentajeGrasa >= 24 && porcentajeGrasa < 36) return '#008640'; // verde
+                if (porcentajeGrasa >= 36 && porcentajeGrasa < 42) return '#FF5E00'; // naranja
+                if (porcentajeGrasa >= 42) return 'red';
+            }
+        }
+
+        return 'black';
+    }
+
 
     return (
         <div className="form-container">
@@ -213,6 +273,19 @@ const Form = () => {
                             autoComplete='off'
                         />
                     </div>
+                    {/* VASOS DE AGUA POR DIA */}
+                    <div className="form-group">
+                        <label> Cantidad de vasos de agua pura por dia:</label>
+                        <input
+                            type="number"
+                            name="hidratacion"
+                            placeholder='Ingrese cuantos vasos de agua bebe al dia aprox.'
+                            className="form-control"
+                            value={datosUsuario.hidratacion}
+                            onChange={handleChange}
+                            autoComplete='off'
+                        />
+                    </div>
                     {/* NIVEL DE ACTIVIDAD FISICA */}
                     <div className="form-group">
                         <label>Nivel de Actividad Física:</label>
@@ -237,50 +310,88 @@ const Form = () => {
             <div className="resultados">
                 <h4 className='pb-4'>Resultados</h4>
                 <div className='result-ctn'>
-                    <div> <b> IMC (Indice de Masa Corporal): </b> {resultados.imc} </div>
-                    {formSent && resultados.imc && (
-                        <p>
-                            {resultados.imc < 15 ? 'Está muy bajo (demasiado bajo)' :
-                                resultados.imc >= 15 && resultados.imc <= 25 ? 'Está en un rango saludable' :
-                                    resultados.imc > 25 && 'Está muy alto (demasiado alto)'}
-                        </p>
-                    )}
+                    <div> <b> IMC (Indice de Masa Corporal): <span style={{
+                        color:
+                            resultados.imc < 18.5 ? '#F7BF09' : // amarillo
+                                resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#008640' : // verde
+                                    resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F7BF09' :
+                                        resultados.imc >= 30 && resultados.imc <= 39.9 ? '#FF5E00' : // naranja
+                                            resultados.imc > 40 && 'red'
+                    }}>{resultados.imc}</span> </b></div>
                 </div>
                 <div className='result-ctn'>
-                    <div> <b> Metabolismo basal: </b> {resultados.metabolismoBasal} </div>
-                    {/* <b> Metabolismo Basal: </b>
-                    <p> {resultados.metabolismoBasal}</p> */}
+                    <div> <b> Metabolismo basal: </b> <span> {resultados.metabolismoBasal} </span> </div>
                 </div>
                 <div className='result-ctn'>
-                    <div> <b> % De Grasa: </b> {resultados.porcentajeGrasa} </div>
-                    {formSent && resultados.porcentajeGrasa && (
-                        <p>
-                            {resultados.porcentajeGrasa < 15 ? 'Está muy bajo (demasiado bajo)' :
-                                resultados.porcentajeGrasa >= 15 && resultados.porcentajeGrasa <= 25 ? 'Está en un rango saludable' :
-                                    resultados.porcentajeGrasa > 25 && 'Está muy alto (demasiado alto)'}
-                        </p>
-                    )}
-                    {/* <b> % De Grasa: </b>
-                    <p> {resultados.porcentajeGrasa}</p> */}
+                    <div>
+                        <b> % De Grasa:{' '}
+                            <span style={{ color: getPercentageGrasaColor() }}>
+                                {resultados.porcentajeGrasa}
+                            </span>
+                        </b>
+                    </div>
                 </div>
-                {/* <div className='result-ctn'>
-                    <div> <b> Kg De Grasa: </b> {resultados.cantidadGrasa} </div>
-                </div> */}
                 <div className='result-ctn'>
                     <div> <b> Kg De Musculo: </b> {resultados.cantidadMusculo} </div>
-                    {/* <b> KG De Musculo: </b>
-                    <p> {resultados.cantidadMusculo}</p> */}
                 </div>
                 <div className='result-ctn'>
                     <div> <b> Proteina diaria necesaria: </b> {resultados.proteinaNecesaria} gramos </div>
-                    {/* <b> Proteina Diaria Necesaria: </b>
-                    <p> {resultados.proteinaNecesaria}</p> */}
                 </div>
                 <div className='result-ctn'>
-                    <div> <b> Hidratación diaria: </b> {(datosUsuario.peso * 0.04).toFixed(1)} litros </div>
+                    <div> <b> Hidratación diaria: </b> {resultados.hidratacionNecesaria} litros </div>
                 </div>
+                {formSent && (
+                    <div className='result-ctn'>
+                        <h4> Tus resultados: </h4>
+                        <div>
+                            {/* IMC */}
+                            {resultados.imc < 18.5 && (
+                                <p>
+                                    El <b>Índice de Masa Muscular</b> indica que en este momento estás por debajo del peso ideal.
+                                    Es necesario subir el peso a través de aumentar la masa muscular como la masa grasa hasta llegar a los valores de equilibrio saludables.
+                                    En el caso que tu masa grasa este normal o en exceso, que puede suceder, será necesario concentrarse en aumentar la masa muscular a través de reforzar el ejercicio de esfuerzo y el consumo de una mayor cantidad de proteína.
+                                </p>
+                            )}
+                            {resultados.imc >= 18.5 && resultados.imc <= 24.9 && (
+                                <p>
+                                    El <b>Índice de Masa Muscular</b> indica que en este momento estás en valores normales, donde el cuerpo además de conservar una forma estilizada, tendrá buenos niveles de energía y funcionará óptimamente.
+
+                                    Este valor debe verse como algo positivo y también considerar los demás valores ya que aún teniendo el IMC en valores normales puede haber exceso de grasa corporal a corregir.
+                                </p>
+                            )}
+                            {resultados.imc >= 25 && resultados.imc <= 29.9 && (
+                                <p>
+                                    El <b>Índice de Masa Muscular</b> indica que en este momento estás con sobrepeso, donde estas expuesto al riesgo de desarrolar enfermedades cardiovasculares, diabetes tipo 2, hipertensión y otros problemas de salud.
+                                </p>
+                            )}
+                            {resultados.imc >= 30 && resultados.imc <= 39.9 && (
+                                <p>
+                                    El <b>Índice de Masa Muscular</b> indica que en este momento estás expuesto a correr riesgo significativamente elevado de enfermedades crónicas, más allá de las enfermedades cardiovasculares, diabetes tipo 2 e hipertensión propias de un estado anterior de sobrepeso.
+                                </p>
+                            )}
+                            {resultados.imc > 40 && (
+                                <p>
+                                    El <b>Índice de Masa Muscular</b> indica que en este momento estás con altísimo riesgo de enfermedades crónicas además de estar con falta de energía, un mal descanso y poca recuperación física, a complicaciones cardiovasculares, diabetes tipo 2 e hipertensión propias de los estados anteriores de sobrepeso y obesidad.
+                                </p>
+                            )}
+                            <br />
+                            {/* HIDRATACION */}
+                            {litrosDia < resultados.hidratacionNecesaria ? (
+                                <p>
+                                    La <b>hidratación</b> es fundamental para el funcionamiento óptimo de nuestro cuerpo. Hoy te hidratas con {litrosDia} litros y tu hidratación ideal es con {resultados.hidratacionNecesaria} litros diarios, por lo que debes tomar {(resultados.hidratacionNecesaria - litrosDia).toFixed(1)} litros al día para llegar al número ideal.
+                                </p>
+                            ) : (
+                                <p>
+                                    La <b>hidratación</b> es fundamental para el funcionamiento óptimo de nuestro cuerpo. No es necesario un ajuste en la cantidad y sigue con este hábito. ¡FELICITACIONES!
+                                </p>
+                            )}
+
+                        </div>
+                    </div>
+                )}
+
             </div>
-        </div>
+        </div >
     );
 };
 

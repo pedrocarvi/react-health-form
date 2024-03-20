@@ -1,21 +1,21 @@
 import React from 'react'
 import logoComunidad from '../../assets/logo-comunidad.png'
-import instagramIcon from '../../assets/instagram-icon.png'
+// import instagramIcon from '../../assets/instagram-icon.png'
 import webIcon from '../../assets/web-icon.png'
-import youtubeIcon from '../../assets/youtube-icon.png'
+// import youtubeIcon from '../../assets/youtube-icon.png'
 import './socialinfo.css'
 
 const SocialInfo = () => {
-    const redes = [
-        {
-            nombre: "Sitio web",
-            imagen: webIcon,
-            link: "https://www.comunidadsisepuede.online/"
-        }
-    ]
+    // const redes = [
+    //     {
+    //         nombre: "Sitio web",
+    //         imagen: webIcon,
+    //         link: "https://www.comunidadsisepuede.online/"
+    //     }
+    // ]
     return (
         <div>
-            <nav className="navbar bg-body-emphasis py-3 border">
+            {/* <nav className="navbar bg-body-emphasis py-3 border">
                 <div className="container-fluid">
                     <div className='d-flex gap-2 align-items-center'>
                         <img src={logoComunidad} alt="Logo de la comunidad" className='logo-comunidad' />
@@ -34,7 +34,10 @@ const SocialInfo = () => {
                         }
                     </div>
                 </div>
-            </nav>
+            </nav> */}
+            <div className='d-flex align-items-center justify-content-center w-100 pt-3'>
+                <img src={logoComunidad} alt="Logo de la comunidad" className='logo-comunidad' />
+            </div>
         </div>
     )
 }
