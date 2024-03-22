@@ -1,10 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './form.css'
+import menLowImcImage from '../../assets/men-lowimc.png'
+import menHealthyImcImage from '../../assets/men-healthy.png'
+import menOverweightImcImage from '../../assets/men_overweight.png'
+import menObeseImcImage from '../../assets/men_obese.png'
+import menOverObeseImcImage from '../../assets/men_overobese.png'
+import womenLowImcImage from '../../assets/women-lowimc.png'
+import womenHealthyImcImage from '../../assets/women-healthy.png'
+import womenOverweightImcImage from '../../assets/women_overweight.png'
+import womenObeseImcImage from '../../assets/women_obese.png'
+import womenOverObeseImcImage from '../../assets/women_overobese.png'
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const Form = () => {
 
-    const [formSent, setFormSent] = useState(false)
-    const [litrosDia, setLitrosDia] = useState(0)
+    const [formSent, setFormSent] = useState(false);
+    const [litrosDia, setLitrosDia] = useState(0);
+    const [estadoPersona, setEstadoPersona] = useState('');
+    const [idealFatRange, setIdealFatRange] = useState('');
+    const [imcImage, setImcImage] = useState('');
+    const [nivelMusculatura, setNivelMusculatura] = useState('');
 
     const [datosUsuario, setDatosUsuario] = useState({
         nombre: '',
@@ -28,6 +44,13 @@ const Form = () => {
         hidratacionNecesaria: '',
         proteinaNecesaria: '',
     });
+
+    useEffect(() => {
+        console.log("Imc image ", imcImage);
+        console.log("Resultados ", resultados)
+        console.log("Estado Persona ", estadoPersona)
+        console.log("Nivel musculatura", nivelMusculatura)
+    }, [imcImage, resultados, estadoPersona, nivelMusculatura]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -55,12 +78,38 @@ const Form = () => {
             proteinaNecesaria: proteinaNecesaria.toFixed(2),
             hidratacionNecesaria: hidratacionNecesaria.toFixed(1)
         });
+        const range = calculateIdealFatRange(datosUsuario);
+        setIdealFatRange(range);
+        getIMCImage();
+        getPercentageGrasaEstado();
+        calcularNivelMusculatura();
         setFormSent(true)
-        console.log("Datos usuario: ", datosUsuario)
-        console.log("Resultados", resultados);
-        console.log("litros que toma por dia", litrosDia)
-        console.log("litros que debe tomar", resultados.hidratacionNecesaria)
     };
+
+    const {
+        nombre,
+        sexo,
+        edad,
+        altura,
+        peso,
+        cintura,
+        cuello,
+        cadera,
+        hidratacion,
+        nivelActividad
+    } = datosUsuario;
+
+    const todosCamposLlenos =
+        nombre !== '' &&
+        sexo !== '' &&
+        edad !== '' &&
+        altura !== '' &&
+        peso !== '' &&
+        cintura !== '' &&
+        cuello !== '' &&
+        cadera !== '' &&
+        hidratacion !== '' &&
+        nivelActividad !== '';
 
     const calcularMetabolismoBasal = () => {
         const { sexo, edad, altura, peso } = datosUsuario;
@@ -116,51 +165,144 @@ const Form = () => {
         }
     };
 
-    function getPercentageGrasaColor() {
+    async function getPercentageGrasaEstado() {
         const { sexo, edad } = datosUsuario;
         const { porcentajeGrasa } = resultados;
 
+        let estado = '';
+
         if (sexo === "H") {
             if (edad > 18 && edad <= 39) {
-                if (porcentajeGrasa < 8) return '#F7BF09'; // amarillo
-                if (porcentajeGrasa >= 8 && porcentajeGrasa < 20) return '#008640'; // verde
-                if (porcentajeGrasa >= 20 && porcentajeGrasa < 26) return '#FF5E00'; // naranja
-                if (porcentajeGrasa >= 26) return 'red';
+                if (porcentajeGrasa < 8) estado = 'Flaca';
+                else if (porcentajeGrasa >= 8 && porcentajeGrasa < 20) estado = 'Normal';
+                else if (porcentajeGrasa >= 20 && porcentajeGrasa < 26) estado = 'Sobrepeso';
+                else estado = 'Obeso';
             } else if (edad > 39 && edad <= 59) {
-                if (porcentajeGrasa < 11) return '#F7BF09'; // amarillo
-                if (porcentajeGrasa >= 11 && porcentajeGrasa < 22) return '#008640'; // verde
-                if (porcentajeGrasa >= 22 && porcentajeGrasa < 30) return '#FF5E00'; // naranja
-                if (porcentajeGrasa >= 30) return 'red';
+                if (porcentajeGrasa < 11) estado = 'Flaca';
+                else if (porcentajeGrasa >= 11 && porcentajeGrasa < 22) estado = 'Normal';
+                else if (porcentajeGrasa >= 22 && porcentajeGrasa < 30) estado = 'Sobrepeso';
+                else estado = 'Obeso';
             } else if (edad > 59) {
-                if (porcentajeGrasa < 13) return '#F7BF09'; // amarillo
-                if (porcentajeGrasa >= 13 && porcentajeGrasa < 31) return '#008640'; // verde
-                if (porcentajeGrasa >= 31 && porcentajeGrasa < 37) return '#FF5E00'; // naranja
-                if (porcentajeGrasa >= 37) return 'red';
+                if (porcentajeGrasa < 13) estado = 'Flaca';
+                else if (porcentajeGrasa >= 13 && porcentajeGrasa < 31) estado = 'Normal';
+                else if (porcentajeGrasa >= 31 && porcentajeGrasa < 37) estado = 'Sobrepeso';
+                else estado = 'Obeso';
             }
         }
 
         if (sexo === "M") {
             if (edad > 18 && edad <= 39) {
-                if (porcentajeGrasa < 21) return '#F7BF09'; // amarillo
-                if (porcentajeGrasa >= 21 && porcentajeGrasa < 33) return '#008640'; // verde
-                if (porcentajeGrasa >= 33 && porcentajeGrasa < 39) return '#FF5E00'; // naranja
-                if (porcentajeGrasa >= 39) return 'red';
+                if (porcentajeGrasa < 21) estado = 'Flaca';
+                else if (porcentajeGrasa >= 21 && porcentajeGrasa < 33) estado = 'Normal';
+                else if (porcentajeGrasa >= 33 && porcentajeGrasa < 39) estado = 'Sobrepeso';
+                else estado = 'Obeso';
             } else if (edad > 39 && edad <= 59) {
-                if (porcentajeGrasa < 23) return '#F7BF09'; // amarillo
-                if (porcentajeGrasa >= 23 && porcentajeGrasa < 34) return '#008640'; // verde
-                if (porcentajeGrasa >= 34 && porcentajeGrasa < 40) return '#FF5E00'; // naranja
-                if (porcentajeGrasa >= 40) return 'red';
+                if (porcentajeGrasa < 23) estado = 'Flaca';
+                else if (porcentajeGrasa >= 23 && porcentajeGrasa < 34) estado = 'Normal';
+                else if (porcentajeGrasa >= 34 && porcentajeGrasa < 40) estado = 'Sobrepeso';
+                else estado = 'Obeso';
             } else if (edad > 59) {
-                if (porcentajeGrasa < 24) return '#F7BF09'; // amarillo
-                if (porcentajeGrasa >= 24 && porcentajeGrasa < 36) return '#008640'; // verde
-                if (porcentajeGrasa >= 36 && porcentajeGrasa < 42) return '#FF5E00'; // naranja
-                if (porcentajeGrasa >= 42) return 'red';
+                if (porcentajeGrasa < 24) estado = 'Flaca';
+                else if (porcentajeGrasa >= 24 && porcentajeGrasa < 36) estado = 'Normal';
+                else if (porcentajeGrasa >= 36 && porcentajeGrasa < 42) estado = 'Sobrepeso';
+                else estado = 'Obeso';
             }
         }
 
-        return 'black';
+        await setEstadoPersona(estado);
     }
 
+    async function getIMCImage() {
+        const { sexo } = datosUsuario;
+        const { imc } = resultados;
+        let imagenImc = ''
+
+        if (sexo === 'H') {
+            if (imc <= 18.5) imagenImc = menLowImcImage;
+            if (imc > 18.5 && imc <= 25) imagenImc = menHealthyImcImage;
+            if (imc > 25 && imc <= 30) imagenImc = menOverweightImcImage;
+            if (imc > 30 && imc <= 40) imagenImc = menObeseImcImage;
+            if (imc > 40) imagenImc = menOverObeseImcImage
+        } else {
+            if (imc <= 18.5) imagenImc = womenLowImcImage;
+            if (imc > 18.5 && imc <= 25) imagenImc = womenHealthyImcImage;
+            if (imc > 25 && imc <= 30) imagenImc = womenOverweightImcImage;
+            if (imc > 30 && imc <= 40) imagenImc = womenObeseImcImage;
+            if (imc > 40) imagenImc = womenOverObeseImcImage;
+        }
+
+        await setImcImage(imagenImc)
+    }
+
+    const calculateIdealFatRange = (datosUsuario) => {
+        const { sexo, edad } = datosUsuario;
+        let minRange, maxRange;
+
+        if (sexo === 'H') {
+            if (edad >= 18 && edad <= 39) {
+                minRange = 8;
+                maxRange = 20;
+            } else if (edad > 39 && edad <= 59) {
+                minRange = 11;
+                maxRange = 22;
+            } else {
+                minRange = 13;
+                maxRange = 31
+            }
+        } else if (sexo === 'M') {
+            if (edad >= 18 && edad <= 39) {
+                minRange = 21;
+                maxRange = 33;
+            } else if (edad > 39 && edad <= 59) {
+                minRange = 23;
+                maxRange = 34;
+            } else {
+                minRange = 24;
+                maxRange = 36;
+            }
+        }
+
+        return `${minRange}%-${maxRange}%`
+    };
+
+    const calcularNivelMusculatura = () => {
+        const { peso } = datosUsuario;
+        const { cantidadMusculo } = resultados;
+        let nivelMusculatura;
+        const porcentajeMusculatura = ((cantidadMusculo * 100) / peso).toFixed(2)
+        // si la cantidad de musculo es mas de un 75% del total del peso es alto
+        // si es entre 50 y 75 es normal
+        // si es menos de 50 es bajo
+        if (porcentajeMusculatura < 50) {
+            nivelMusculatura = 'Baja'
+        } else if (porcentajeMusculatura >= 50 && porcentajeMusculatura < 75) {
+            nivelMusculatura = 'Media'
+        } else {
+            nivelMusculatura = 'Alta'
+        }
+
+        setNivelMusculatura(nivelMusculatura)
+    }
+
+    function generatePDF() {
+        const container = document.getElementById('containerId'); // Replace 'containerId' with your container's ID
+        // Adjusted dimensions for A4 paper size with 40px padding
+        const pdfWidth = 210; // A4 width in mm
+        const pdfHeight = 297; // A4 height in mm
+        const padding = 40; // 40px padding
+        const imgWidth = pdfWidth - (padding * 2); // Adjusted width for content
+        const imgHeight = pdfHeight - (padding * 2); // Adjusted height for content
+
+        html2canvas(container).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            let position = padding; // Starting position with padding
+
+            pdf.addImage(imgData, 'PNG', padding, position, imgWidth, imgHeight);
+
+            pdf.save('generated.pdf');
+        });
+    };
 
     return (
         <div className="form-container">
@@ -302,7 +444,7 @@ const Form = () => {
                             <option value="baja">Baja (Casi sedentario)</option>
                         </select>
                     </div>
-                    <button type="submit" className="btn enviar-btn">
+                    <button type="submit" className="btn enviar-btn" disabled={!todosCamposLlenos}>
                         Enviar
                     </button>
                 </form>
@@ -325,7 +467,14 @@ const Form = () => {
                 <div className='result-ctn'>
                     <div>
                         <b> % De Grasa:{' '}
-                            <span style={{ color: getPercentageGrasaColor() }}>
+                            <span style={{
+                                color:
+                                    estadoPersona === "Flaca" ? '#F7BF09' :
+                                        estadoPersona === "Normal" ? '#008640' :
+                                            estadoPersona === "Sobrepeso" ? '#FF5E00' :
+                                                estadoPersona === "Obeso" ? 'red' :
+                                                    'black'
+                            }}>
                                 {resultados.porcentajeGrasa}
                             </span>
                         </b>
@@ -341,7 +490,7 @@ const Form = () => {
                     <div> <b> Hidratación diaria: </b> {resultados.hidratacionNecesaria} litros </div>
                 </div>
                 {formSent && (
-                    <div className='result-ctn'>
+                    <div className='result-ctn' id="containerId">
                         <h4> Tus resultados: </h4>
                         <div>
                             {/* IMC */}
@@ -375,6 +524,51 @@ const Form = () => {
                                 </p>
                             )}
                             <br />
+                            {/* IMC IMAGE */}
+                            <div className='imcImage-container d-flex align-items-center w-100'>
+                                {<img src={imcImage} alt="IMC" className='imcImage' />}
+                            </div>
+                            <br />
+                            {/* RESULTADOS GRASA */}
+                            {
+                                estadoPersona === "Flaca" && (
+                                    <p>
+                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa es bajo para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. El impacto de un porcentaje de grasa bajo es desarrollar problemas de índole hormonal, inmunológicos, insatisfacciones estéticas por nombrar algunos.
+                                    </p>
+                                )
+                            }
+                            {
+                                estadoPersona === "Normal" && (
+                                    <p>
+                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está dentro de valores normales para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {idealFatRange} siempre y cuando tu masa muscular esté bien equilibrada.
+                                        <br />
+                                        En este estado deberías tener buen nivel de energía, descanso reparador y óptimo funcionamiento de tu organismo.
+                                    </p>
+                                )
+                            }
+                            {
+                                estadoPersona === "Sobrepeso" && (
+                                    <p>
+                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está alto para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {idealFatRange} acompañado con una masa muscular equilibrada.
+                                        <br /><br />
+                                        ¿Qué le pasa al cuerpo cuando la masa grasa se encuentra en este valor? Comienza a predisponer al organismo a un funcionamiento forzado para el que no está preparado y con ello comienzan a llegar síntomas que muchas veces no atendemos como por ej. irritabilidad, mal descanso, falta de energía, dolores de cabeza. Todo eso deriva en el desarrollo de enfermedades hoy muy comunes como hipertensión, diabetes, etc.
+                                        <br /><br />
+                                        En la mayoría de los casos la masa grasa aumenta por lo que comemos y por lo que dejamos de comer. Muchas veces no comprendemos bien este concepto que es tan simple y que si fuéramos a su raíz, lo solucionaríamos y viviríamos en alto grado de bienestar
+                                    </p>
+                                )
+                            }
+                            {
+                                estadoPersona === "Obeso" && (
+                                    <p>
+                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está muy alto para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {idealFatRange} acompañado con una masa muscular equilibrada.
+                                        <br /><br />
+                                        ¿Qué le pasa al cuerpo cuando la masa grasa se encuentra en este valor? El cuerpo en su funcionamiento se ve forzado por el exceso de esta masa grasa y falta la energía, el rendimiento disminuye, le cuesta oxigenarse, afecta la buena digestión y comienzan las enfermedades crónicas como hipertensión, diabetes, enfermedades cardiovasculares, accidentes cerebrovasculares y algunos tipos de cáncer.
+                                        <br /><br />
+                                        En la mayoría de los casos el aumento de la masa grasa comenzó por lo que comemos y por lo que dejamos de comer. Muchas veces no comprendemos bien este concepto que es tan simple y que si fuéramos a su raíz, lo solucionaríamos y viviríamos en alto grado de bienestar.
+                                    </p>
+                                )
+                            }
+                            <br />
                             {/* HIDRATACION */}
                             {litrosDia < resultados.hidratacionNecesaria ? (
                                 <p>
@@ -382,14 +576,14 @@ const Form = () => {
                                 </p>
                             ) : (
                                 <p>
-                                    La <b>hidratación</b> es fundamental para el funcionamiento óptimo de nuestro cuerpo. No es necesario un ajuste en la cantidad y sigue con este hábito. ¡FELICITACIONES!
+                                    La <b>Hidratación</b> es fundamental para el funcionamiento óptimo de nuestro cuerpo. No es necesario un ajuste en la cantidad y sigue con este hábito. ¡FELICITACIONES!
                                 </p>
                             )}
 
                         </div>
                     </div>
                 )}
-
+                <button onClick={generatePDF} className='btn enviar-btn'>Generar PDF</button>
             </div>
         </div >
     );
