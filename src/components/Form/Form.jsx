@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './form.css'
+// Imc images
 import menLowImcImage from '../../assets/men-lowimc.png'
 import menHealthyImcImage from '../../assets/men-healthy.png'
 import menOverweightImcImage from '../../assets/men_overweight.png'
@@ -10,6 +11,13 @@ import womenHealthyImcImage from '../../assets/women-healthy.png'
 import womenOverweightImcImage from '../../assets/women_overweight.png'
 import womenObeseImcImage from '../../assets/women_obese.png'
 import womenOverObeseImcImage from '../../assets/women_overobese.png'
+// Complexion fisica images
+import complexionDelgada from '../../assets/complejidad_delgada.png'
+import complexionEntrenada from '../../assets/complejidad_entrenada.png'
+import complexionNormal from '../../assets/complejidad_normal.png'
+import complexionSobrepeso from '../../assets/complejidad_sobrepeso.png'
+import complexionObesa from '../../assets/complejidad_excedida.png'
+// jsPDF
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -44,7 +52,9 @@ const Form = () => {
         estadoGrasa: '',
         estadoPersona: '',
         nivelMusculatura: '',
-        complexionFisica: ''
+        imcComplexionFisica: '',
+        complexionFisica: '',
+        complexionFisicaImage: '',
     });
 
     const handleChange = (e) => {
@@ -95,9 +105,14 @@ const Form = () => {
         const nivelMusculatura = calcularNivelMusculatura(cantidadMusculo);
         console.log('9 - nivel musculatura', nivelMusculatura)
         //
-        const complexionFisica = getComplexionFisica(nivelMusculatura, estadoPersona)
-        console.log('10 - complexion fisica', complexionFisica)
-
+        const nivelImcComplexionFisica = calcularImcComplexionFisica(imc);
+        console.log('10 - nivel Imc para complexion fisica')
+        //
+        const complexionFisica = getComplexionFisica(nivelImcComplexionFisica, estadoPersona)
+        console.log('11 - complexion fisica', complexionFisica)
+        //
+        const complexionFisicaImage = getComplexionFisicaImage(complexionFisica)
+        console.log('12 complexion fisica image', complexionFisicaImage)
         setResultados({
             imc: imc,
             metabolismoBasal: metabolismoBasal.toFixed(2),
@@ -110,7 +125,9 @@ const Form = () => {
             imcImage: imcImage,
             estadoPersona: estadoPersona,
             nivelMusculatura: nivelMusculatura,
-            complexionFisica: complexionFisica
+            imcComplexionFisica: nivelImcComplexionFisica,
+            complexionFisica: complexionFisica,
+            complexionFisicaImage: complexionFisicaImage
         });
         console.log('resultados: ', resultados)
         setFormSent(true)
@@ -258,6 +275,22 @@ const Form = () => {
         return imagenImc;
     }
 
+    function getComplexionFisicaImage(complexionFisica) {
+
+        if (complexionFisica === 'Delgada') {
+            return complexionDelgada
+        } else if (complexionFisica === "Entrenada") {
+            return complexionEntrenada
+        } else if (complexionFisica === "Normal") {
+            return complexionNormal
+        } else if (complexionFisica === "Sobrepeso") {
+            return complexionSobrepeso
+        } else {
+            return complexionObesa
+        }
+
+    }
+
     const calculateIdealFatRange = (datosUsuario) => {
         const { sexo, edad } = datosUsuario;
         let minRange, maxRange;
@@ -304,19 +337,36 @@ const Form = () => {
         }
     }
 
-    const getComplexionFisica = (nivelMusculatura, estadoPersona) => {
+    const calcularImcComplexionFisica = (imc) => {
+        console.log('Calculo de imc para complexion fisica', imc)
 
-        console.log('get complex fisica data', nivelMusculatura, ' ', estadoPersona)
+        if (imc < 22.8) {
+            return 'Bajo'
+        } else if (imc >= 22.8 && imc < 32.95) {
+            return 'Medio'
+        } else {
+            return 'Alto'
+        }
+    }
 
-        if (estadoPersona === "Obeso" && nivelMusculatura === "Baja") {
-            return "Muy excesiva"
-        } else if (estadoPersona === "Sobrepeso" && nivelMusculatura === "Baja") {
+    const getComplexionFisica = (nivelImcComplexionFisica, estadoPersona) => {
+
+        const { nivelActividad } = datosUsuario
+
+        console.log('get complex fisica data', nivelImcComplexionFisica, ' ', estadoPersona)
+
+        if (estadoPersona === "Obeso" && nivelImcComplexionFisica === "Alto") {
+            return "Muy excedida"
+        } else if ((estadoPersona === "Sobrepeso") && (nivelImcComplexionFisica === "Alto")) {
             return "Sobrepeso"
-        } else if (estadoPersona === "Normal" && nivelMusculatura === "Media") {
+        } else if ((estadoPersona === "Sobrepeso") && (nivelImcComplexionFisica === "Medio")) {
+            return "Sobrepeso"
+        }
+        else if ((estadoPersona === "Normal") && nivelImcComplexionFisica === "Medio") {
             return "Normal"
-        } else if (estadoPersona === "Normal" && nivelMusculatura === "Alta") {
+        } else if (estadoPersona === "Normal" && nivelImcComplexionFisica === "Medio" && nivelActividad === "alta") {
             return "Entrenada"
-        } else if (estadoPersona === "Flaca" && nivelMusculatura === "Alta") {
+        } else if (estadoPersona === "Flaca" && nivelImcComplexionFisica === "Bajo") {
             return "Delgada"
         }
 
@@ -327,7 +377,7 @@ const Form = () => {
         // Adjusted dimensions for A4 paper size with 40px padding
         const pdfWidth = 210; // A4 width in mm
         const pdfHeight = 297; // A4 height in mm
-        const padding = 40; // 40px padding
+        const padding = 20; // 40px padding
         const imgWidth = pdfWidth - (padding * 2); // Adjusted width for content
         const imgHeight = pdfHeight - (padding * 2); // Adjusted height for content
 
@@ -338,7 +388,7 @@ const Form = () => {
 
             pdf.addImage(imgData, 'PNG', padding, position, imgWidth, imgHeight);
 
-            pdf.save('generated.pdf');
+            pdf.save('resultados.pdf');
         });
     };
 
@@ -491,12 +541,12 @@ const Form = () => {
                 <h4 className='pb-4'>Resultados</h4>
                 <div className='result-ctn'>
                     <div> <b> IMC (Indice de Masa Corporal): <span style={{
-                        color:
+                        backgroundColor:
                             resultados.imc < 18.5 ? '#F7BF09' : // amarillo
                                 resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#008640' : // verde
                                     resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F7BF09' :
                                         resultados.imc >= 30 && resultados.imc <= 39.9 ? '#FF5E00' : // naranja
-                                            resultados.imc > 40 && 'red'
+                                            resultados.imc > 40 && 'red', color: '#FFFFFF'
                     }}>{resultados.imc}</span> </b></div>
                 </div>
                 <div className='result-ctn'>
@@ -506,12 +556,12 @@ const Form = () => {
                     <div>
                         <b> % De Grasa:{' '}
                             <span style={{
-                                color:
+                                backgroundColor:
                                     resultados.estadoPersona === "Flaca" ? '#F7BF09' :
                                         resultados.estadoPersona === "Normal" ? '#008640' :
                                             resultados.estadoPersona === "Sobrepeso" ? '#FF5E00' :
                                                 resultados.estadoPersona === "Obeso" ? 'red' :
-                                                    'black'
+                                                    'black', color: '#FFFFFF'
                             }}>
                                 {resultados.porcentajeGrasa}
                             </span>
@@ -637,12 +687,17 @@ const Form = () => {
                                 )
                             }
                             {
-                                resultados.complexionFisica === "Muy excesiva" && (
+                                resultados.complexionFisica === "Muy excedida" && (
                                     <p>
                                         Tu <b> Complexión Física </b>  es {resultados.complexionFisica}, tienes niveles de grasa muy altos y músculo muy bajos.Es la combinación en donde el cuerpo sufre más y está altamente expuesto a desarrollar enfermedades crónicas. Con la degradación de masa muscular disminuye la fuerza, los niveles de energía y resistencia para el funcionamiento cotidiano. El cuerpo pierde mucha tonicidad y cambia de manera aguda la forma.
                                     </p>
                                 )
                             }
+                            <br />
+                            <div className='imcImage-container d-flex align-items-center w-100'>
+                                {<img src={resultados.complexionFisicaImage} alt="COMPLEXION FISICA IMAGE" className='imcImage' />}
+                            </div>
+                            <br />
                             {/* HIDRATACION */}
                             {litrosDia < resultados.hidratacionNecesaria ? (
                                 <p>
