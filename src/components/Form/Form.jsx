@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './form.css'
 import menLowImcImage from '../../assets/men-lowimc.png'
 import menHealthyImcImage from '../../assets/men-healthy.png'
@@ -17,10 +17,6 @@ const Form = () => {
 
     const [formSent, setFormSent] = useState(false);
     const [litrosDia, setLitrosDia] = useState(0);
-    const [estadoPersona, setEstadoPersona] = useState('');
-    const [idealFatRange, setIdealFatRange] = useState('');
-    const [imcImage, setImcImage] = useState('');
-    const [nivelMusculatura, setNivelMusculatura] = useState('');
 
     const [datosUsuario, setDatosUsuario] = useState({
         nombre: '',
@@ -43,46 +39,80 @@ const Form = () => {
         cantidadMusculo: '',
         hidratacionNecesaria: '',
         proteinaNecesaria: '',
+        rangoIdealGrasa: '',
+        imcImage: '',
+        estadoGrasa: '',
+        estadoPersona: '',
+        nivelMusculatura: '',
+        complexionFisica: ''
     });
-
-    useEffect(() => {
-        console.log("Imc image ", imcImage);
-        console.log("Resultados ", resultados)
-        console.log("Estado Persona ", estadoPersona)
-        console.log("Nivel musculatura", nivelMusculatura)
-    }, [imcImage, resultados, estadoPersona, nivelMusculatura]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setDatosUsuario({ ...datosUsuario, [name]: value });
     };
 
+    useEffect(() => {
+        console.log('resultados: ', resultados);
+    }, [resultados]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        // Reviso de captar bien la informacion
         console.log("Datos usuario: ", datosUsuario)
+        // Seteo los resultados        
         const pesoKg = parseFloat(datosUsuario.peso);
         const alturaCm = datosUsuario.altura
+        const imc = (pesoKg / Math.pow(alturaCm / 100, 2)).toFixed(2)
+        // Reviso orden de las funciones
         const metabolismoBasal = calcularMetabolismoBasal();
+        console.log("1 - metabolismo basal", metabolismoBasal)
+        //
         const porcentajeGrasa = calcularPorcentajeGrasa();
+        console.log("2 - porcentaje grasa", porcentajeGrasa)
+        //
         const cantidadGrasa = calcularCantidadGrasa(porcentajeGrasa);
+        console.log("3 - kg grasa", cantidadGrasa)
+        //
         const cantidadMusculo = calcularCantidadMusculo(pesoKg, cantidadGrasa);
+        console.log("4 - kg musculo", cantidadMusculo)
+        //
         const proteinaNecesaria = calcularProteinaNecesaria(cantidadMusculo);
+        console.log("5 - proteina necesaria", proteinaNecesaria)
+        //
         setLitrosDia((datosUsuario.hidratacion * 250) / 1000) // cuanto toma
         const hidratacionNecesaria = calcularHidratacionDiaria(pesoKg); // cuanto necesita tomar
+        //
+        const rangoIdealGrasa = calculateIdealFatRange(datosUsuario)
+        console.log('6 - rango ideal de grasa', rangoIdealGrasa)
+        //
+        const imcImage = getIMCImage(imc);
+        console.log('7 - imcImage', imcImage)
+        // 
+        const estadoPersona = getPercentageGrasaEstado(porcentajeGrasa);
+        console.log('8 - estado persona grasa', estadoPersona)
+        //
+        const nivelMusculatura = calcularNivelMusculatura(cantidadMusculo);
+        console.log('9 - nivel musculatura', nivelMusculatura)
+        //
+        const complexionFisica = getComplexionFisica(nivelMusculatura, estadoPersona)
+        console.log('10 - complexion fisica', complexionFisica)
+
         setResultados({
-            imc: (pesoKg / Math.pow(alturaCm / 100, 2)).toFixed(2),
+            imc: imc,
             metabolismoBasal: metabolismoBasal.toFixed(2),
             porcentajeGrasa: porcentajeGrasa.toFixed(2),
             cantidadGrasa: cantidadGrasa.toFixed(2),
             cantidadMusculo: cantidadMusculo.toFixed(2),
             proteinaNecesaria: proteinaNecesaria.toFixed(2),
-            hidratacionNecesaria: hidratacionNecesaria.toFixed(1)
+            hidratacionNecesaria: hidratacionNecesaria.toFixed(1),
+            rangoIdealGrasa: rangoIdealGrasa,
+            imcImage: imcImage,
+            estadoPersona: estadoPersona,
+            nivelMusculatura: nivelMusculatura,
+            complexionFisica: complexionFisica
         });
-        const range = calculateIdealFatRange(datosUsuario);
-        setIdealFatRange(range);
-        getIMCImage();
-        getPercentageGrasaEstado();
-        calcularNivelMusculatura();
+        console.log('resultados: ', resultados)
         setFormSent(true)
     };
 
@@ -165,56 +195,50 @@ const Form = () => {
         }
     };
 
-    async function getPercentageGrasaEstado() {
+    function getPercentageGrasaEstado(porcentajeGrasa) {
         const { sexo, edad } = datosUsuario;
-        const { porcentajeGrasa } = resultados;
-
-        let estado = '';
 
         if (sexo === "H") {
             if (edad > 18 && edad <= 39) {
-                if (porcentajeGrasa < 8) estado = 'Flaca';
-                else if (porcentajeGrasa >= 8 && porcentajeGrasa < 20) estado = 'Normal';
-                else if (porcentajeGrasa >= 20 && porcentajeGrasa < 26) estado = 'Sobrepeso';
-                else estado = 'Obeso';
+                if (porcentajeGrasa < 8) return 'Flaca';
+                else if (porcentajeGrasa >= 8 && porcentajeGrasa < 20) return 'Normal';
+                else if (porcentajeGrasa >= 20 && porcentajeGrasa < 26) return 'Sobrepeso';
+                else return 'Obeso';
             } else if (edad > 39 && edad <= 59) {
-                if (porcentajeGrasa < 11) estado = 'Flaca';
-                else if (porcentajeGrasa >= 11 && porcentajeGrasa < 22) estado = 'Normal';
-                else if (porcentajeGrasa >= 22 && porcentajeGrasa < 30) estado = 'Sobrepeso';
-                else estado = 'Obeso';
+                if (porcentajeGrasa < 11) return 'Flaca';
+                else if (porcentajeGrasa >= 11 && porcentajeGrasa < 22) return 'Normal';
+                else if (porcentajeGrasa >= 22 && porcentajeGrasa < 30) return 'Sobrepeso';
+                else return 'Obeso';
             } else if (edad > 59) {
-                if (porcentajeGrasa < 13) estado = 'Flaca';
-                else if (porcentajeGrasa >= 13 && porcentajeGrasa < 31) estado = 'Normal';
-                else if (porcentajeGrasa >= 31 && porcentajeGrasa < 37) estado = 'Sobrepeso';
-                else estado = 'Obeso';
+                if (porcentajeGrasa < 13) return 'Flaca';
+                else if (porcentajeGrasa >= 13 && porcentajeGrasa < 31) return 'Normal';
+                else if (porcentajeGrasa >= 31 && porcentajeGrasa < 37) return 'Sobrepeso';
+                else return 'Obeso';
             }
         }
 
         if (sexo === "M") {
             if (edad > 18 && edad <= 39) {
-                if (porcentajeGrasa < 21) estado = 'Flaca';
-                else if (porcentajeGrasa >= 21 && porcentajeGrasa < 33) estado = 'Normal';
-                else if (porcentajeGrasa >= 33 && porcentajeGrasa < 39) estado = 'Sobrepeso';
-                else estado = 'Obeso';
+                if (porcentajeGrasa < 21) return 'Flaca';
+                else if (porcentajeGrasa >= 21 && porcentajeGrasa < 33) return 'Normal';
+                else if (porcentajeGrasa >= 33 && porcentajeGrasa < 39) return 'Sobrepeso';
+                else return 'Obeso';
             } else if (edad > 39 && edad <= 59) {
-                if (porcentajeGrasa < 23) estado = 'Flaca';
-                else if (porcentajeGrasa >= 23 && porcentajeGrasa < 34) estado = 'Normal';
-                else if (porcentajeGrasa >= 34 && porcentajeGrasa < 40) estado = 'Sobrepeso';
-                else estado = 'Obeso';
+                if (porcentajeGrasa < 23) return 'Flaca';
+                else if (porcentajeGrasa >= 23 && porcentajeGrasa < 34) return 'Normal';
+                else if (porcentajeGrasa >= 34 && porcentajeGrasa < 40) return 'Sobrepeso';
+                else return 'Obeso';
             } else if (edad > 59) {
-                if (porcentajeGrasa < 24) estado = 'Flaca';
-                else if (porcentajeGrasa >= 24 && porcentajeGrasa < 36) estado = 'Normal';
-                else if (porcentajeGrasa >= 36 && porcentajeGrasa < 42) estado = 'Sobrepeso';
-                else estado = 'Obeso';
+                if (porcentajeGrasa < 24) return 'Flaca';
+                else if (porcentajeGrasa >= 24 && porcentajeGrasa < 36) return 'Normal';
+                else if (porcentajeGrasa >= 36 && porcentajeGrasa < 42) return 'Sobrepeso';
+                else return 'Obeso';
             }
         }
-
-        await setEstadoPersona(estado);
     }
 
-    async function getIMCImage() {
+    function getIMCImage(imc) {
         const { sexo } = datosUsuario;
-        const { imc } = resultados;
         let imagenImc = ''
 
         if (sexo === 'H') {
@@ -231,7 +255,7 @@ const Form = () => {
             if (imc > 40) imagenImc = womenOverObeseImcImage;
         }
 
-        await setImcImage(imagenImc)
+        return imagenImc;
     }
 
     const calculateIdealFatRange = (datosUsuario) => {
@@ -265,23 +289,37 @@ const Form = () => {
         return `${minRange}%-${maxRange}%`
     };
 
-    const calcularNivelMusculatura = () => {
+    const calcularNivelMusculatura = (cantidadMusculo) => {
         const { peso } = datosUsuario;
-        const { cantidadMusculo } = resultados;
-        let nivelMusculatura;
-        const porcentajeMusculatura = ((cantidadMusculo * 100) / peso).toFixed(2)
+        const porcentajeMusculatura = ((cantidadMusculo.toFixed(2) * 100) / peso).toFixed(2)
         // si la cantidad de musculo es mas de un 75% del total del peso es alto
         // si es entre 50 y 75 es normal
         // si es menos de 50 es bajo
         if (porcentajeMusculatura < 50) {
-            nivelMusculatura = 'Baja'
+            return 'Baja'
         } else if (porcentajeMusculatura >= 50 && porcentajeMusculatura < 75) {
-            nivelMusculatura = 'Media'
+            return 'Media'
         } else {
-            nivelMusculatura = 'Alta'
+            return 'Alta'
+        }
+    }
+
+    const getComplexionFisica = (nivelMusculatura, estadoPersona) => {
+
+        console.log('get complex fisica data', nivelMusculatura, ' ', estadoPersona)
+
+        if (estadoPersona === "Obeso" && nivelMusculatura === "Baja") {
+            return "Muy excesiva"
+        } else if (estadoPersona === "Sobrepeso" && nivelMusculatura === "Baja") {
+            return "Sobrepeso"
+        } else if (estadoPersona === "Normal" && nivelMusculatura === "Media") {
+            return "Normal"
+        } else if (estadoPersona === "Normal" && nivelMusculatura === "Alta") {
+            return "Entrenada"
+        } else if (estadoPersona === "Flaca" && nivelMusculatura === "Alta") {
+            return "Delgada"
         }
 
-        setNivelMusculatura(nivelMusculatura)
     }
 
     function generatePDF() {
@@ -469,10 +507,10 @@ const Form = () => {
                         <b> % De Grasa:{' '}
                             <span style={{
                                 color:
-                                    estadoPersona === "Flaca" ? '#F7BF09' :
-                                        estadoPersona === "Normal" ? '#008640' :
-                                            estadoPersona === "Sobrepeso" ? '#FF5E00' :
-                                                estadoPersona === "Obeso" ? 'red' :
+                                    resultados.estadoPersona === "Flaca" ? '#F7BF09' :
+                                        resultados.estadoPersona === "Normal" ? '#008640' :
+                                            resultados.estadoPersona === "Sobrepeso" ? '#FF5E00' :
+                                                resultados.estadoPersona === "Obeso" ? 'red' :
                                                     'black'
                             }}>
                                 {resultados.porcentajeGrasa}
@@ -526,30 +564,30 @@ const Form = () => {
                             <br />
                             {/* IMC IMAGE */}
                             <div className='imcImage-container d-flex align-items-center w-100'>
-                                {<img src={imcImage} alt="IMC" className='imcImage' />}
+                                {<img src={resultados.imcImage} alt="IMC" className='imcImage' />}
                             </div>
                             <br />
                             {/* RESULTADOS GRASA */}
                             {
-                                estadoPersona === "Flaca" && (
+                                resultados.estadoPersona === "Flaca" && (
                                     <p>
                                         Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa es bajo para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. El impacto de un porcentaje de grasa bajo es desarrollar problemas de índole hormonal, inmunológicos, insatisfacciones estéticas por nombrar algunos.
                                     </p>
                                 )
                             }
                             {
-                                estadoPersona === "Normal" && (
+                                resultados.estadoPersona === "Normal" && (
                                     <p>
-                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está dentro de valores normales para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {idealFatRange} siempre y cuando tu masa muscular esté bien equilibrada.
+                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está dentro de valores normales para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {resultados.rangoIdealGrasa} siempre y cuando tu masa muscular esté bien equilibrada.
                                         <br />
                                         En este estado deberías tener buen nivel de energía, descanso reparador y óptimo funcionamiento de tu organismo.
                                     </p>
                                 )
                             }
                             {
-                                estadoPersona === "Sobrepeso" && (
+                                resultados.estadoPersona === "Sobrepeso" && (
                                     <p>
-                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está alto para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {idealFatRange} acompañado con una masa muscular equilibrada.
+                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está alto para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {resultados.rangoIdealGrasa} acompañado con una masa muscular equilibrada.
                                         <br /><br />
                                         ¿Qué le pasa al cuerpo cuando la masa grasa se encuentra en este valor? Comienza a predisponer al organismo a un funcionamiento forzado para el que no está preparado y con ello comienzan a llegar síntomas que muchas veces no atendemos como por ej. irritabilidad, mal descanso, falta de energía, dolores de cabeza. Todo eso deriva en el desarrollo de enfermedades hoy muy comunes como hipertensión, diabetes, etc.
                                         <br /><br />
@@ -558,9 +596,9 @@ const Form = () => {
                                 )
                             }
                             {
-                                estadoPersona === "Obeso" && (
+                                resultados.estadoPersona === "Obeso" && (
                                     <p>
-                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está muy alto para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {idealFatRange} acompañado con una masa muscular equilibrada.
+                                        Tu <b> Porcentaje de grasa </b> es de {resultados.porcentajeGrasa}%. Este porcentaje de grasa está muy alto para {datosUsuario.sexo === "H" ? 'un hombre' : 'una mujer'} de tu estatura y peso. Lo ideal siempre es estar en un rango de {resultados.rangoIdealGrasa} acompañado con una masa muscular equilibrada.
                                         <br /><br />
                                         ¿Qué le pasa al cuerpo cuando la masa grasa se encuentra en este valor? El cuerpo en su funcionamiento se ve forzado por el exceso de esta masa grasa y falta la energía, el rendimiento disminuye, le cuesta oxigenarse, afecta la buena digestión y comienzan las enfermedades crónicas como hipertensión, diabetes, enfermedades cardiovasculares, accidentes cerebrovasculares y algunos tipos de cáncer.
                                         <br /><br />
@@ -569,6 +607,42 @@ const Form = () => {
                                 )
                             }
                             <br />
+                            {/* COMPLEXION FISICA */}
+                            {
+                                resultados.complexionFisica === "Delgada" && (
+                                    <p>
+                                        Tu <b> Complexión Física </b> es {resultados.complexionFisica}, tienes niveles de grasa y músculo bajos.En esta combinación predomina la insatisfacción por cómo te ves y como estas rindiendo en tus actividades. Por lo general hay falta de energía y concentración, bajo rendimiento físico y mental; el descanso siempre suele ser insuficiente sin importar las horas dormidas. Claramente es necesario elevar la masa grasa como la masa muscular y la solución nunca está en comer más, sino en cambiar la calidad de la alimentación, bajar el estrés y permitir que el cuerpo absorba mejor. Subir estos valores de manera saludable lleva más dedicación y tiempo si lo comparamos con las personas que buscan bajar de peso.
+                                    </p>
+                                )
+                            }
+                            {
+                                resultados.complexionFisica === "Entrenada" && (
+                                    <p>
+                                        Tu <b> Complexión Física </b> es {resultados.complexionFisica}, tienes niveles de grasa bajos y músculo altos.Esta combinación es la ideal para transitar la vida con bienestar y de manera saludable, donde mirarnos al espejo es un deleite y usar la ropa que nos gusta un placer total. Se destaca la tonicidad muscular y la forma estilizada del cuerpo, los niveles de energía, concentración, resistencia y descanso como recuperación, deberían ser óptimos y si no lo son en tu caso, será necesario reforzar los aportes nutricionales ya que en el entrenamiento se produce mayor oxidación y el requerimiento proteico se eleva. Asegúrate de tener cubiertas todos los días todas estas demandas.
+                                    </p>
+                                )
+                            }
+                            {
+                                resultados.complexionFisica === "Normal" && (
+                                    <p>
+                                        Tu <b> Complexión Física </b>  es {resultados.complexionFisica}, tienes niveles de grasa y músculo normales.Esta combinación es la ideal para transitar la vida con bienestar y de manera saludable, donde mirarnos al espejo es un deleite y usar la ropa que nos gusta un placer total. En este estado, los niveles de energía, concentración, resistencia y descanso como recuperación, deberían ser óptimos y si no lo son en tu caso, será necesario reforzar los aportes nutricionales para que esto ocurra, ya que aún con estos valores pueden ocurrir desajustes a nivel celular que obstaculicen el funcionamiento óptimo de nuestro organismo.
+                                    </p>
+                                )
+                            }
+                            {
+                                resultados.complexionFisica === "Sobrepeso" && (
+                                    <p>
+                                        Tu <b> Complexión Física </b>  es {resultados.complexionFisica}, tienes niveles de grasa altos y músculo bajos.En esta combinación el cuerpo comienza a cambiar la forma, los niveles de energía y rendimiento físico disminuyen, comienza la propensión al desarrollo de enfermedades que pueden transformarse en crónicas, el apetito se descontrola y la predilección por más harinas y dulces toman protagonismo.
+                                    </p>
+                                )
+                            }
+                            {
+                                resultados.complexionFisica === "Muy excesiva" && (
+                                    <p>
+                                        Tu <b> Complexión Física </b>  es {resultados.complexionFisica}, tienes niveles de grasa muy altos y músculo muy bajos.Es la combinación en donde el cuerpo sufre más y está altamente expuesto a desarrollar enfermedades crónicas. Con la degradación de masa muscular disminuye la fuerza, los niveles de energía y resistencia para el funcionamiento cotidiano. El cuerpo pierde mucha tonicidad y cambia de manera aguda la forma.
+                                    </p>
+                                )
+                            }
                             {/* HIDRATACION */}
                             {litrosDia < resultados.hidratacionNecesaria ? (
                                 <p>
