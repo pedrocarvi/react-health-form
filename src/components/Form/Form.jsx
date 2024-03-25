@@ -17,6 +17,11 @@ import complexionEntrenada from '../../assets/complejidad_entrenada.png'
 import complexionNormal from '../../assets/complejidad_normal.png'
 import complexionSobrepeso from '../../assets/complejidad_sobrepeso.png'
 import complexionObesa from '../../assets/complejidad_excedida.png'
+import womenComplexionDelgada from '../../assets/women_complex_delgada.png'
+import womenComplexionEntrenada from '../../assets/women_complex_entrenada.png'
+import womenComplexionNormal from '../../assets/women_complex_normal.png'
+import womenComplexionSobrepeso from '../../assets/women_complex_sobrepeso.png'
+import womenComplexionObesa from '../../assets/women_complex_excedida.png'
 // jsPDF
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -277,16 +282,32 @@ const Form = () => {
 
     function getComplexionFisicaImage(complexionFisica) {
 
-        if (complexionFisica === 'Delgada') {
-            return complexionDelgada
-        } else if (complexionFisica === "Entrenada") {
-            return complexionEntrenada
-        } else if (complexionFisica === "Normal") {
-            return complexionNormal
-        } else if (complexionFisica === "Sobrepeso") {
-            return complexionSobrepeso
+        const { sexo } = datosUsuario
+
+        if (sexo === "H") {
+            if (complexionFisica === 'Delgada') {
+                return complexionDelgada
+            } else if (complexionFisica === "Entrenada") {
+                return complexionEntrenada
+            } else if (complexionFisica === "Normal") {
+                return complexionNormal
+            } else if (complexionFisica === "Sobrepeso") {
+                return complexionSobrepeso
+            } else {
+                return complexionObesa
+            }
         } else {
-            return complexionObesa
+            if (complexionFisica === 'Delgada') {
+                return womenComplexionDelgada
+            } else if (complexionFisica === "Entrenada") {
+                return womenComplexionEntrenada
+            } else if (complexionFisica === "Normal") {
+                return womenComplexionNormal
+            } else if (complexionFisica === "Sobrepeso") {
+                return womenComplexionSobrepeso
+            } else {
+                return womenComplexionObesa
+            }
         }
 
     }
@@ -539,30 +560,30 @@ const Form = () => {
             </div>
             <div className="resultados">
                 <h4 className='pb-4'>Resultados</h4>
-                <div className='result-ctn'>
-                    <div> <b> IMC (Indice de Masa Corporal): <span style={{
-                        backgroundColor:
-                            resultados.imc < 18.5 ? '#F7BF09' : // amarillo
-                                resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#008640' : // verde
-                                    resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F7BF09' :
-                                        resultados.imc >= 30 && resultados.imc <= 39.9 ? '#FF5E00' : // naranja
-                                            resultados.imc > 40 && 'red', color: '#FFFFFF'
-                    }}>{resultados.imc}</span> </b></div>
+                <div className='result-ctn' style={{
+                    backgroundColor:
+                        formSent && resultados.imc < 18.5 ? '#F7BF09' : // amarillo
+                            formSent && resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#008640' : // verde
+                                formSent && resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F7BF09' :
+                                    formSent && resultados.imc >= 30 && resultados.imc <= 39.9 ? '#FF5E00' : // naranja
+                                        formSent && resultados.imc > 40 && 'red', color: '#000'
+                }}>
+                    <div> <b> IMC (Indice de Masa Corporal): <span>{resultados.imc}</span> </b></div>
                 </div>
                 <div className='result-ctn'>
                     <div> <b> Metabolismo basal: </b> <span> {resultados.metabolismoBasal} </span> </div>
                 </div>
-                <div className='result-ctn'>
+                <div className='result-ctn' style={{
+                    backgroundColor:
+                        resultados.estadoPersona === "Flaca" ? '#F7BF09' :
+                            resultados.estadoPersona === "Normal" ? '#008640' :
+                                resultados.estadoPersona === "Sobrepeso" ? '#FF5E00' :
+                                    resultados.estadoPersona === "Obeso" ? 'red' :
+                                        '#FFFFFF', color: '#000'
+                }}>
                     <div>
                         <b> % De Grasa:{' '}
-                            <span style={{
-                                backgroundColor:
-                                    resultados.estadoPersona === "Flaca" ? '#F7BF09' :
-                                        resultados.estadoPersona === "Normal" ? '#008640' :
-                                            resultados.estadoPersona === "Sobrepeso" ? '#FF5E00' :
-                                                resultados.estadoPersona === "Obeso" ? 'red' :
-                                                    'black', color: '#FFFFFF'
-                            }}>
+                            <span >
                                 {resultados.porcentajeGrasa}
                             </span>
                         </b>
@@ -577,9 +598,11 @@ const Form = () => {
                 <div className='result-ctn'>
                     <div> <b> Hidratación diaria: </b> {resultados.hidratacionNecesaria} litros </div>
                 </div>
+            </div>
+            <div className="devoluciones d-flex flex-column justify-content-center align-items-center">
                 {formSent && (
-                    <div className='result-ctn' id="containerId">
-                        <h4> Tus resultados: </h4>
+                    <div id="containerId">
+                        <h4> Devolución: </h4>
                         <div>
                             {/* IMC */}
                             {resultados.imc < 18.5 && (
@@ -695,7 +718,7 @@ const Form = () => {
                             }
                             <br />
                             <div className='imcImage-container d-flex align-items-center w-100'>
-                                {<img src={resultados.complexionFisicaImage} alt="COMPLEXION FISICA IMAGE" className='imcImage' />}
+                                {<img src={resultados.complexionFisicaImage} alt="complexion fisica" className='imcImage' />}
                             </div>
                             <br />
                             {/* HIDRATACION */}
