@@ -605,10 +605,13 @@ const Form = () => {
                     <div> <b> Hidratación diaria: </b> {resultados.hidratacionNecesaria} litros </div>
                 </div>
             </div>
-            <div className="devoluciones d-flex flex-column justify-content-center align-items-center">
+            <div className="devoluciones d-flex flex-column justify-content-center align-items-start">
+                <h4> Devolución </h4>
+                {!formSent && (
+                    <div className='py-4' style={{ color: '#7c5780' }}> ¡Aquí se verán tus resultados una vez que completes el formulario!</div>
+                )}
                 {formSent && (
                     <div id="containerId">
-                        <h4> Devolución: </h4>
                         <div>
                             {/* IMC */}
                             {resultados.imc < 18.5 && (
@@ -741,7 +744,9 @@ const Form = () => {
                         </div>
                     </div>
                 )}
-                <button onClick={generatePDF} className='btn enviar-btn'>Generar PDF</button>
+                {formSent && (
+                    <button onClick={generatePDF} className='btn enviar-btn'>Generar PDF</button>
+                )}
             </div>
         </div >
     );
