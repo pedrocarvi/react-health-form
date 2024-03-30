@@ -22,6 +22,8 @@ import womenComplexionEntrenada from '../../assets/women_complex_entrenada.png'
 import womenComplexionNormal from '../../assets/women_complex_normal.png'
 import womenComplexionSobrepeso from '../../assets/women_complex_sobrepeso.png'
 import womenComplexionObesa from '../../assets/women_complex_excedida.png'
+// Peso ideal
+import PesosIdeales from '../../assets/tabla-pesos.jpeg'
 // jsPDF
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -60,6 +62,8 @@ const Form = () => {
         imcComplexionFisica: '',
         complexionFisica: '',
         complexionFisicaImage: '',
+        pesoideal: '',
+        diferenciaPesoIdeal: ''
     });
 
     const handleChange = (e) => {
@@ -118,6 +122,12 @@ const Form = () => {
         //
         const complexionFisicaImage = getComplexionFisicaImage(complexionFisica)
         console.log('12 complexion fisica image', complexionFisicaImage)
+        //
+        const pesoIdeal = calcularPesoIdeal();
+        console.log('13 - peso ideal', pesoIdeal)
+        //
+        const diferenciaConPesoIdeal = calcularDiferenciaPeso(pesoIdeal.pesoMinimo, pesoIdeal.pesoMaximo);
+        console.log('14 diferencia con peso ideal', diferenciaConPesoIdeal)
         setResultados({
             imc: imc,
             metabolismoBasal: metabolismoBasal.toFixed(2),
@@ -132,7 +142,9 @@ const Form = () => {
             nivelMusculatura: nivelMusculatura,
             imcComplexionFisica: nivelImcComplexionFisica,
             complexionFisica: complexionFisica,
-            complexionFisicaImage: complexionFisicaImage
+            complexionFisicaImage: complexionFisicaImage,
+            pesoIdeal: pesoIdeal,
+            diferenciaPesoIdeal: diferenciaConPesoIdeal
         });
         console.log('resultados: ', resultados)
         setFormSent(true)
@@ -396,7 +408,134 @@ const Form = () => {
         } else if (estadoPersona === "Flaca" && nivelImcComplexionFisica === "Bajo") {
             return "Delgada"
         }
+    }
 
+    function calcularPesoIdeal() {
+        const { sexo, altura } = datosUsuario
+        let pesoMinimo, pesoMaximo;
+
+        if (sexo === 'M') {
+            if (altura >= 147 && altura <= 150) {
+                pesoMinimo = 44;
+                pesoMaximo = 49;
+            } else if (altura > 150 && altura <= 152) {
+                pesoMinimo = 45;
+                pesoMaximo = 50;
+            } else if (altura > 152 && altura <= 155) {
+                pesoMinimo = 46;
+                pesoMaximo = 51;
+            } else if (altura > 155 && altura <= 157) {
+                pesoMinimo = 47;
+                pesoMaximo = 53;
+            } else if (altura > 157 && altura <= 160) {
+                pesoMinimo = 49;
+                pesoMaximo = 54;
+            } else if (altura > 160 && altura <= 162) {
+                pesoMinimo = 50;
+                pesoMaximo = 56;
+            } else if (altura > 162 && altura <= 165) {
+                pesoMinimo = 51;
+                pesoMaximo = 57;
+            } else if (altura > 165 && altura <= 168) {
+                pesoMinimo = 53;
+                pesoMaximo = 59;
+            } else if (altura > 168 && altura <= 170) {
+                pesoMinimo = 55;
+                pesoMaximo = 61;
+            } else if (altura > 170 && altura <= 173) {
+                pesoMinimo = 56;
+                pesoMaximo = 63;
+            } else if (altura > 173 && altura <= 175) {
+                pesoMinimo = 58;
+                pesoMaximo = 65;
+            } else if (altura > 175 && altura <= 178) {
+                pesoMinimo = 60;
+                pesoMaximo = 67;
+            } else if (altura > 178 && altura <= 180) {
+                pesoMinimo = 62;
+                pesoMaximo = 69;
+            } else if (altura > 180 && altura <= 183) {
+                pesoMinimo = 64;
+                pesoMaximo = 71;
+            } else if (altura > 183 && altura <= 186) {
+                pesoMinimo = 66;
+                pesoMaximo = 72;
+            } else if (altura > 186 && altura <= 190) {
+                pesoMinimo = 68;
+                pesoMaximo = 75;
+            } else if (altura > 190 && altura <= 195) {
+                pesoMinimo = 70;
+                pesoMaximo = 77;
+            } else if (altura > 195) {
+                pesoMinimo = 73;
+                pesoMaximo = 80;
+            }
+        } else if (sexo === 'H') {
+            if (altura >= 157 && altura <= 160) {
+                pesoMinimo = 54;
+                pesoMaximo = 59;
+            } else if (altura > 160 && altura <= 162) {
+                pesoMinimo = 55;
+                pesoMaximo = 60;
+            } else if (altura > 162 && altura <= 165) {
+                pesoMinimo = 56;
+                pesoMaximo = 62;
+            } else if (altura > 165 && altura <= 168) {
+                pesoMinimo = 58;
+                pesoMaximo = 63;
+            } else if (altura > 168 && altura <= 170) {
+                pesoMinimo = 59;
+                pesoMaximo = 65;
+            } else if (altura > 170 && altura <= 173) {
+                pesoMinimo = 61;
+                pesoMaximo = 67;
+            } else if (altura > 173 && altura <= 175) {
+                pesoMinimo = 63;
+                pesoMaximo = 69;
+            } else if (altura > 175 && altura <= 178) {
+                pesoMinimo = 65;
+                pesoMaximo = 71;
+            } else if (altura > 178 && altura <= 180) {
+                pesoMinimo = 66;
+                pesoMaximo = 73;
+            } else if (altura > 180 && altura <= 183) {
+                pesoMinimo = 68;
+                pesoMaximo = 75;
+            } else if (altura > 183 && altura <= 185) {
+                pesoMinimo = 70;
+                pesoMaximo = 77;
+            } else if (altura > 185 && altura <= 188) {
+                pesoMinimo = 72;
+                pesoMaximo = 80;
+            } else if (altura > 188 && altura <= 190) {
+                pesoMinimo = 74;
+                pesoMaximo = 82;
+            } else if (altura > 190 && altura <= 193) {
+                pesoMinimo = 76;
+                pesoMaximo = 84;
+            } else if (altura > 193) {
+                pesoMinimo = 78;
+                pesoMaximo = 86;
+            }
+        }
+
+        return { pesoMinimo, pesoMaximo };
+    }
+
+    function calcularDiferenciaPeso(pesoMinimo, pesoMaximo) {
+        const { peso } = datosUsuario
+        let diferencia = 0;
+
+        // Calcula la diferencia entre el peso ingresado y el rango ideal
+        if (peso < pesoMinimo) {
+            diferencia = pesoMinimo - peso;
+            return `Tu valor en peso, estas con bajo peso y deberías recuperar ${diferencia} kilos, considerando que seas contextura ósea media, esto puede variar si tu contextura ósea es pequeña en 2 kilos menos y si tu contextura ósea es grande en 2 kilos más. Tu meta a alcanzar es ${pesoMinimo} kilos.`;
+        } else if (peso > pesoMaximo) {
+            diferencia = peso - pesoMaximo;
+            return `Tu valor en peso, esta excedido en ${diferencia} kilos, considerando que seas contextura ósea media, esto puede variar si tu contextura ósea es pequeña en 2 kilos menos y si tu contextura ósea es grande en 2 kilos más. Tu meta a alcanzar es ${pesoMaximo} kilos.`;
+        } else {
+            return "Está dentro del rango de peso ideal.";
+        }
     }
 
     function generatePDF() {
@@ -424,195 +563,217 @@ const Form = () => {
             <div className="formulario">
                 <form onSubmit={handleSubmit}>
                     <h4 className='pb-2'> Ingresa tus datos aqui </h4>
-                    {/* Nombre */}
-                    <div className="form-group">
-                        <label>Nombre:</label>
-                        <input
-                            type="text"
-                            name="nombre"
-                            placeholder='Ingrese su nombre'
-                            className="form-control"
-                            value={datosUsuario.nombre}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
+                    <div className='formulario-columnas-container'>
+                        <div className='formulario-columnas-container-campos'>
+                            <div className='formulario-columna1'>
+                                {/* Nombre */}
+                                <div className="form-group">
+                                    <label>Nombre:</label>
+                                    <input
+                                        type="text"
+                                        name="nombre"
+                                        placeholder='Ingrese su nombre'
+                                        className="form-control"
+                                        value={datosUsuario.nombre}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                                {/* Sexo */}
+                                <div className="form-group">
+                                    <label> Sexo </label>
+                                    <select
+                                        name="sexo"
+                                        className="form-control"
+                                        value={datosUsuario.sexo}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    >
+                                        <option value="">Seleccione una opcion </option>
+                                        <option value="H"> Hombre </option>
+                                        <option value="M">Mujer</option>
+                                    </select>
+                                </div>
+                                {/* EDAD */}
+                                <div className="form-group">
+                                    <label> Edad </label>
+                                    <input
+                                        type="number"
+                                        name="edad"
+                                        placeholder='Ingrese su edad'
+                                        className="form-control"
+                                        value={datosUsuario.edad}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                                {/* ALTURA */}
+                                <div className="form-group">
+                                    <label> Altura (cm) </label>
+                                    <input
+                                        type="number"
+                                        name="altura"
+                                        placeholder='Ingrese su altura (cm)'
+                                        className="form-control"
+                                        value={datosUsuario.altura}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                                {/* PESO */}
+                                <div className="form-group">
+                                    <label> Peso (kg) </label>
+                                    <input
+                                        type="number"
+                                        name="peso"
+                                        placeholder='Ingrese su peso (kg)'
+                                        className="form-control"
+                                        value={datosUsuario.peso}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                            </div>
+                            <div className="formulario-columna2">
+                                {/* CINTURA */}
+                                <div className="form-group">
+                                    <label> Cintura (cm) </label>
+                                    <input
+                                        type="number"
+                                        name="cintura"
+                                        placeholder='Ingrese las medidas de su cintura (cm)'
+                                        className="form-control"
+                                        value={datosUsuario.cintura}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                                {/* CUELLO */}
+                                <div className="form-group">
+                                    <label> Cuello (cm) </label>
+                                    <input
+                                        type="number"
+                                        name="cuello"
+                                        placeholder='Ingrese las medidas de su cuello (cm)'
+                                        className="form-control"
+                                        value={datosUsuario.cuello}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                                {/* CADERA */}
+                                <div className="form-group">
+                                    <label> Cadera (cm) </label>
+                                    <input
+                                        type="number"
+                                        name="cadera"
+                                        placeholder='Ingrese las medidas de su cadera (cm)'
+                                        className="form-control"
+                                        value={datosUsuario.cadera}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                                {/* VASOS DE AGUA POR DIA */}
+                                <div className="form-group">
+                                    <label> Cantidad de vasos de agua pura por dia:</label>
+                                    <input
+                                        type="number"
+                                        name="hidratacion"
+                                        placeholder='Ingrese cuantos vasos de agua bebe al dia aprox.'
+                                        className="form-control"
+                                        value={datosUsuario.hidratacion}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    />
+                                </div>
+                                {/* NIVEL DE ACTIVIDAD FISICA */}
+                                <div className="form-group">
+                                    <label>Nivel de Actividad Física:</label>
+                                    <select
+                                        name="nivelActividad"
+                                        className="form-control"
+                                        value={datosUsuario.nivelActividad}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    >
+                                        <option value="">Seleccione un nivel</option>
+                                        <option value="alta">Alta (5 o más entrenamientos por semana)</option>
+                                        <option value="media">Media (3 entrenamientos por semana)</option>
+                                        <option value="baja">Baja (Casi sedentario)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="formulario-ctnboton">
+                            <button type="submit" className="btn enviar-btn" disabled={!todosCamposLlenos}>
+                                Enviar
+                            </button>
+                        </div>
                     </div>
-                    {/* Sexo */}
-                    <div className="form-group">
-                        <label> Sexo </label>
-                        <select
-                            name="sexo"
-                            className="form-control"
-                            value={datosUsuario.sexo}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        >
-                            <option value="">Seleccione una opcion </option>
-                            <option value="H"> Hombre </option>
-                            <option value="M">Mujer</option>
-                        </select>
-                    </div>
-                    {/* EDAD */}
-                    <div className="form-group">
-                        <label> Edad </label>
-                        <input
-                            type="number"
-                            name="edad"
-                            placeholder='Ingrese su edad'
-                            className="form-control"
-                            value={datosUsuario.edad}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
-                    </div>
-                    {/* ALTURA */}
-                    <div className="form-group">
-                        <label> Altura (cm) </label>
-                        <input
-                            type="number"
-                            name="altura"
-                            placeholder='Ingrese su altura (cm)'
-                            className="form-control"
-                            value={datosUsuario.altura}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
-                    </div>
-                    {/* PESO */}
-                    <div className="form-group">
-                        <label> Peso (kg) </label>
-                        <input
-                            type="number"
-                            name="peso"
-                            placeholder='Ingrese su peso (kg)'
-                            className="form-control"
-                            value={datosUsuario.peso}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
-                    </div>
-                    {/* CINTURA */}
-                    <div className="form-group">
-                        <label> Cintura (cm) </label>
-                        <input
-                            type="number"
-                            name="cintura"
-                            placeholder='Ingrese las medidas de su cintura (cm)'
-                            className="form-control"
-                            value={datosUsuario.cintura}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
-                    </div>
-                    {/* CUELLO */}
-                    <div className="form-group">
-                        <label> Cuello (cm) </label>
-                        <input
-                            type="number"
-                            name="cuello"
-                            placeholder='Ingrese las medidas de su cuello (cm)'
-                            className="form-control"
-                            value={datosUsuario.cuello}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
-                    </div>
-                    {/* CADERA */}
-                    <div className="form-group">
-                        <label> Cadera (cm) </label>
-                        <input
-                            type="number"
-                            name="cadera"
-                            placeholder='Ingrese las medidas de su cadera (cm)'
-                            className="form-control"
-                            value={datosUsuario.cadera}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
-                    </div>
-                    {/* VASOS DE AGUA POR DIA */}
-                    <div className="form-group">
-                        <label> Cantidad de vasos de agua pura por dia:</label>
-                        <input
-                            type="number"
-                            name="hidratacion"
-                            placeholder='Ingrese cuantos vasos de agua bebe al dia aprox.'
-                            className="form-control"
-                            value={datosUsuario.hidratacion}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        />
-                    </div>
-                    {/* NIVEL DE ACTIVIDAD FISICA */}
-                    <div className="form-group">
-                        <label>Nivel de Actividad Física:</label>
-                        <select
-                            name="nivelActividad"
-                            className="form-control"
-                            value={datosUsuario.nivelActividad}
-                            onChange={handleChange}
-                            autoComplete='off'
-                        >
-                            <option value="">Seleccione un nivel</option>
-                            <option value="alta">Alta (5 o más entrenamientos por semana)</option>
-                            <option value="media">Media (3 entrenamientos por semana)</option>
-                            <option value="baja">Baja (Casi sedentario)</option>
-                        </select>
-                    </div>
-                    <button type="submit" className="btn enviar-btn" disabled={!todosCamposLlenos}>
-                        Enviar
-                    </button>
                 </form>
             </div>
             <div className="resultados">
                 <h4 className='pb-4'>Resultados</h4>
-                <div className='result-ctn' style={{
-                    backgroundColor:
-                        formSent && resultados.imc < 18.5 ? '#F7BF09' : // amarillo
-                            formSent && resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#008640' : // verde
-                                formSent && resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F7BF09' :
-                                    formSent && resultados.imc >= 30 && resultados.imc <= 39.9 ? '#FF5E00' : // naranja
-                                        formSent && resultados.imc > 40 && 'red', color: '#000'
-                }}>
-                    <div> <b> IMC (Indice de Masa Corporal): <span>{resultados.imc}</span> </b></div>
-                </div>
-                <div className='result-ctn'>
-                    <div> <b> Metabolismo basal: </b> <span> {resultados.metabolismoBasal} </span> </div>
-                </div>
-                <div className='result-ctn' style={{
-                    backgroundColor:
-                        resultados.estadoPersona === "Flaca" ? '#F7BF09' :
-                            resultados.estadoPersona === "Normal" ? '#008640' :
-                                resultados.estadoPersona === "Sobrepeso" ? '#FF5E00' :
-                                    resultados.estadoPersona === "Obeso" ? 'red' :
-                                        '#FFFFFF', color: '#000'
-                }}>
-                    <div>
-                        <b> % De Grasa:{' '}
-                            <span >
-                                {resultados.porcentajeGrasa}
-                            </span>
-                        </b>
+                <div className="resultados-contenedor-columnas">
+                    <div className='resultados-columna1'>
+                        <div className='result-ctn' style={{
+                            backgroundColor:
+                                formSent && resultados.imc < 18.5 ? '#F7BF09' : // amarillo
+                                    formSent && resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#008640' : // verde
+                                        formSent && resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F7BF09' :
+                                            formSent && resultados.imc >= 30 && resultados.imc <= 39.9 ? '#FF5E00' : // naranja
+                                                formSent && resultados.imc > 40 && 'red', color: '#000'
+                        }}>
+                            <div> <b> IMC (Indice de Masa Corporal): <span>{resultados.imc}</span> </b></div>
+                        </div>
+                        <div className='result-ctn'>
+                            <div> <b> Metabolismo basal: </b> <span> {resultados.metabolismoBasal} </span> </div>
+                        </div>
+                        <div className='result-ctn' style={{
+                            backgroundColor:
+                                resultados.estadoPersona === "Flaca" ? '#F7BF09' :
+                                    resultados.estadoPersona === "Normal" ? '#008640' :
+                                        resultados.estadoPersona === "Sobrepeso" ? '#FF5E00' :
+                                            resultados.estadoPersona === "Obeso" ? 'red' :
+                                                '#FFFFFF', color: '#000'
+                        }}>
+                            <div>
+                                <b> % De Grasa:{' '}
+                                    <span >
+                                        {resultados.porcentajeGrasa}
+                                    </span>
+                                </b>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className='result-ctn'>
-                    <div> <b> Kg De Musculo: </b> {resultados.cantidadMusculo} </div>
-                </div>
-                <div className='result-ctn'>
-                    <div> <b> Proteina diaria necesaria: </b> {resultados.proteinaNecesaria} gramos </div>
-                </div>
-                <div className='result-ctn'>
-                    <div> <b> Hidratación diaria: </b> {resultados.hidratacionNecesaria} litros </div>
+                    <div className="resultados-columna2">
+                        <div className='result-ctn'>
+                            <div> <b> Kg De Musculo: </b> {resultados.cantidadMusculo} </div>
+                        </div>
+                        <div className='result-ctn'>
+                            <div> <b> Proteina diaria necesaria: </b> {resultados.proteinaNecesaria} gramos </div>
+                        </div>
+                        <div className='result-ctn'>
+                            <div> <b> Hidratación diaria: </b> {resultados.hidratacionNecesaria} litros </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="devoluciones d-flex flex-column justify-content-center align-items-start">
-                <h4> Devolución </h4>
+                <h4 style={{ paddingBottom: '20px' }}> Devolución </h4>
                 {!formSent && (
-                    <div className='py-4' style={{ color: '#7c5780' }}> ¡Aquí se verán tus resultados una vez que completes el formulario!</div>
+                    <div className='py-4' style={{ color: '#7c5780', fontWeight: 'bold' }}> ¡Aquí se verán tus resultados una vez que completes el formulario!</div>
                 )}
                 {formSent && (
                     <div id="containerId">
                         <div>
+                            {resultados.diferenciaPesoIdeal}
+                            <br /> <br />
+                            <div className='imcImage-container d-flex align-items-center w-100'>
+                                {<img src={PesosIdeales} alt="IMC" className='imcImage' />}
+                            </div>
+                            <br /> <br />
                             {/* IMC */}
                             {resultados.imc < 18.5 && (
                                 <p>
@@ -649,6 +810,18 @@ const Form = () => {
                                 {<img src={resultados.imcImage} alt="IMC" className='imcImage' />}
                             </div>
                             <br />
+                            {/* METABOLISMO */}
+                            <div>
+                                <p> El valor de tu <b> Ritmo Metabólico </b> hoy es de {resultados.metabolismoBasal} kcal por día.
+
+                                    Esto significa que en un día tu cuerpo consume esa cantidad de calorías. No evaluaremos si es un valor que favorezca o desfavorezca, solo lo tendrás en cuenta para la siguiente ecuación: Si consumes más calorías de las que tu metabolismo gasta, el exceso se almacena como grasa, llevando a un aumento de peso. Por lo tanto, equilibrar lo que comemos con lo que gastamos es clave para mantener o alcanzar un peso saludable.
+
+                                    Como dato importante: En un cuerpo donde hay más masa muscular el metabolismo gastará más y en un cuerpo donde hay exceso de grasa, el metabolismo será más lento. Asique una forma de acelerar la quema de calorías es sumar más masa muscular al cuerpo.
+
+                                    Las proteínas son clave para la salud muscular, promoviendo recuperación y crecimiento tras el ejercicio y previniendo la atrofia con la edad. Esenciales como bloques constructivos musculares, su ingesta adecuada asegura fuerza y funcionalidad corporal, fundamentales para un bienestar integral y actividad constante. También de esto dependerá la forma del cuerpo y su tonicidad.
+
+                                    Esta ingesta tiene que estar repartida a lo largo del día de manera equilibrada y asegúrate no tan solo de estar consumiendo la cantidad adecuada de proteína TODOS LOS DÍAS, sino de hacer la combinación ideal entre las dos más grandes fuentes de proteína como la animal y la vegetal.</p>
+                            </div>
                             {/* RESULTADOS GRASA */}
                             {
                                 resultados.estadoPersona === "Flaca" && (

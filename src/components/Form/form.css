@@ -1,7 +1,9 @@
 .form-container {
   width: 100%;
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: start;
   justify-content: start;
   padding: 30px;
@@ -9,10 +11,36 @@
 }
 
 .formulario {
-  width: 30%;
+  width: 100%;
+  display: flex;
   padding: 0px 30px 50px 0px;
-  padding-right: 30px;
-  border-right: 1px solid #00000050;
+}
+
+.formulario-columnas-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.formulario-columnas-container-campos {
+  display: flex;
+  gap: 40px;
+}
+
+.formulario-columna1, .formulario-columna2 {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 15px;
+}
+
+.formulario-ctnboton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .enviar-btn {
@@ -35,7 +63,6 @@
   justify-content: start;
   align-items: start;
   flex-wrap: nowrap;
-  padding: 20px;
   gap: 15px;
 }
 
@@ -53,17 +80,30 @@ h4 {
 }
 
 .resultados {
-  width: 30%;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+    padding: 0px 30px 50px 0px;
   gap: 15px;
 }
 
+.resultados-contenedor-columnas {
+  display: flex;
+  width: 100%;
+  gap: 40px;
+}
+
+.resultados-columna1, .resultados-columna2 {
+    width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+      gap: 15px;
+}
+
 .devoluciones {
-  width: 40%;
-  padding: 20px;
-  border-left: 1px solid #00000050;
+  width: 100%;
 }
 
 .result-ctn {
@@ -83,17 +123,18 @@ h4 {
 }
 
 .imcImage {
-  width: 100%;
+  width: 60%;
   margin: 0 auto;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 768px) {
   .form-container {
     width: 100%;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 0px;
+    padding: 16px;
   }
   .formulario {
     width: 100%;
@@ -101,12 +142,28 @@ h4 {
     padding: 0;
     padding-bottom: 30px;
   }
+  .formulario-columnas-container, .formulario-columnas-container-campos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .formulario-columna1, .formulario-columna2 {
+    width: 100%;
+  }
   .resultados {
     width: 100%;
     padding: 0px;
     padding-bottom: 40px;
   }
-
+  .resultados-contenedor-columnas {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .resultados-columna1, .resultados-columna2 {
+    width: 100%;
+  }
   .devoluciones {
     width: 100%;
     padding: 0px;

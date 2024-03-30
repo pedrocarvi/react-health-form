@@ -35,7 +35,7 @@ const SocialInfo = () => {
                     </div>
                 </div>
             </nav> */}
-            <div className='d-flex align-items-center justify-content-center w-100 pt-3' style={{ backgroundColor: '#7c5780' }}>
+            <div className='d-flex align-items-center justify-content-center w-100 pt-3'>
                 <img src={logoComunidad} alt="Logo de la comunidad" className='logo-comunidad' />
             </div>
         </div>
