@@ -769,10 +769,10 @@ const Form = () => {
                     <div id="containerId">
                         <div>
                             {resultados.diferenciaPesoIdeal}
-                            <br /> <br />
+                            {/* <br /> <br />
                             <div className='imcImage-container d-flex align-items-center w-100'>
                                 {<img src={PesosIdeales} alt="IMC" className='imcImage' />}
-                            </div>
+                            </div> */}
                             <br /> <br />
                             {/* IMC */}
                             {resultados.imc < 18.5 && (
@@ -813,13 +813,13 @@ const Form = () => {
                             {/* METABOLISMO */}
                             <div>
                                 <p> El valor de tu <b> Ritmo Metabólico </b> hoy es de {resultados.metabolismoBasal} kcal por día.
-
+                                    <br /><br />
                                     Esto significa que en un día tu cuerpo consume esa cantidad de calorías. No evaluaremos si es un valor que favorezca o desfavorezca, solo lo tendrás en cuenta para la siguiente ecuación: Si consumes más calorías de las que tu metabolismo gasta, el exceso se almacena como grasa, llevando a un aumento de peso. Por lo tanto, equilibrar lo que comemos con lo que gastamos es clave para mantener o alcanzar un peso saludable.
-
+                                    <br /><br />
                                     Como dato importante: En un cuerpo donde hay más masa muscular el metabolismo gastará más y en un cuerpo donde hay exceso de grasa, el metabolismo será más lento. Asique una forma de acelerar la quema de calorías es sumar más masa muscular al cuerpo.
-
+                                    <br /><br />
                                     Las proteínas son clave para la salud muscular, promoviendo recuperación y crecimiento tras el ejercicio y previniendo la atrofia con la edad. Esenciales como bloques constructivos musculares, su ingesta adecuada asegura fuerza y funcionalidad corporal, fundamentales para un bienestar integral y actividad constante. También de esto dependerá la forma del cuerpo y su tonicidad.
-
+                                    <br /><br />
                                     Esta ingesta tiene que estar repartida a lo largo del día de manera equilibrada y asegúrate no tan solo de estar consumiendo la cantidad adecuada de proteína TODOS LOS DÍAS, sino de hacer la combinación ideal entre las dos más grandes fuentes de proteína como la animal y la vegetal.</p>
                             </div>
                             {/* RESULTADOS GRASA */}

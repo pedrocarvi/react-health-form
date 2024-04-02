@@ -181,4 +181,9 @@ h4 {
     text-align: center;
     padding-bottom: 10px !important;
   }
+
+    .imcImage {
+      width: 100%;
+      margin: 0 auto;
+    }
 }
