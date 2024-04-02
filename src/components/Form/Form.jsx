@@ -676,7 +676,7 @@ const Form = () => {
                                 </div>
                                 {/* VASOS DE AGUA POR DIA */}
                                 <div className="form-group">
-                                    <label> Cantidad de vasos de agua pura por dia:</label>
+                                    <label> Cantidad de vasos de agua pura por dia (1 vaso = 250ml):</label>
                                     <input
                                         type="number"
                                         name="hidratacion"
