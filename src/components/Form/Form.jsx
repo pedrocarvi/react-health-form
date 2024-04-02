@@ -538,12 +538,37 @@ const Form = () => {
         }
     }
 
+    // function generatePDF() {
+    //     const container = document.getElementById('containerId'); // Replace 'containerId' with your container's ID
+    //     // Adjusted dimensions for A4 paper size with 40px padding
+    //     const pdfWidth = 210; // A4 width in mm
+    //     const pdfHeight = 297; // A4 height in mm
+    //     const padding = 20; // 40px padding
+    //     const imgWidth = pdfWidth - (padding * 2); // Adjusted width for content
+    //     const imgHeight = pdfHeight - (padding * 2); // Adjusted height for content
+
+    //     html2canvas(container).then((canvas) => {
+    //         const imgData = canvas.toDataURL('image/png');
+    //         const pdf = new jsPDF('p', 'mm', 'a4');
+    //         let position = padding; // Starting position with padding
+
+    //         pdf.addImage(imgData, 'PNG', padding, position, imgWidth, imgHeight);
+
+    //         pdf.save('resultados.pdf');
+    //     });
+    // };
+
     function generatePDF() {
         const container = document.getElementById('containerId'); // Replace 'containerId' with your container's ID
-        // Adjusted dimensions for A4 paper size with 40px padding
-        const pdfWidth = 210; // A4 width in mm
-        const pdfHeight = 297; // A4 height in mm
-        const padding = 20; // 40px padding
+
+        // Determine the dimensions of the PDF based on the device's viewport size
+        const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+        const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+        // Adjusted dimensions for A4 paper size with padding
+        const pdfWidth = viewportWidth < 768 ? viewportWidth - 40 : 210; // A4 width in mm or viewport width minus padding for small screens
+        const pdfHeight = viewportHeight < 768 ? viewportHeight - 40 : 297; // A4 height in mm or viewport height minus padding for small screens
+        const padding = 20; // Padding
         const imgWidth = pdfWidth - (padding * 2); // Adjusted width for content
         const imgHeight = pdfHeight - (padding * 2); // Adjusted height for content
 
@@ -557,6 +582,7 @@ const Form = () => {
             pdf.save('resultados.pdf');
         });
     };
+
 
     return (
         <div className="form-container">
