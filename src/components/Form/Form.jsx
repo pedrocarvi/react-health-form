@@ -114,20 +114,19 @@ const Form = () => {
         const nivelMusculatura = calcularNivelMusculatura(cantidadMusculo);
         console.log('9 - nivel musculatura', nivelMusculatura)
         //
-        const nivelImcComplexionFisica = calcularImcComplexionFisica(imc);
-        console.log('10 - nivel Imc para complexion fisica')
-        //
-        const complexionFisica = getComplexionFisica(nivelImcComplexionFisica, estadoPersona)
-        console.log('11 - complexion fisica', complexionFisica)
-        //
-        const complexionFisicaImage = getComplexionFisicaImage(complexionFisica)
-        console.log('12 complexion fisica image', complexionFisicaImage)
-        //
         const pesoIdeal = calcularPesoIdeal();
         console.log('13 - peso ideal', pesoIdeal)
         //
         const diferenciaConPesoIdeal = calcularDiferenciaPeso(pesoIdeal.pesoMinimo, pesoIdeal.pesoMaximo);
         console.log('14 diferencia con peso ideal', diferenciaConPesoIdeal)
+        const nivelImcComplexionFisica = calcularImcComplexionFisica(imc);
+        console.log('10 - nivel Imc para complexion fisica')
+        //
+        const complexionFisica = getComplexionFisica(nivelImcComplexionFisica, estadoPersona, pesoIdeal.pesoMinimo, pesoIdeal.pesoMaximo)
+        console.log('11 - complexion fisica', complexionFisica)
+        //
+        const complexionFisicaImage = getComplexionFisicaImage(complexionFisica)
+        console.log('12 complexion fisica image', complexionFisicaImage)
         setResultados({
             imc: imc,
             metabolismoBasal: metabolismoBasal.toFixed(2),
@@ -402,9 +401,9 @@ const Form = () => {
         }
     }
 
-    const getComplexionFisica = (nivelImcComplexionFisica, estadoPersona) => {
+    const getComplexionFisica = (nivelImcComplexionFisica, estadoPersona, pesoMinimo, pesoMaximo) => {
 
-        const { nivelActividad } = datosUsuario
+        const { nivelActividad, peso } = datosUsuario
 
         console.log('get complex fisica data', nivelImcComplexionFisica, ' ', estadoPersona)
 
@@ -412,11 +411,11 @@ const Form = () => {
             return "Muy excedida"
         } else if ((estadoPersona === "Sobrepeso") && (nivelImcComplexionFisica === "Sobrepeso")) {
             return "Sobrepeso"
-        } else if ((estadoPersona === "Normal") && nivelImcComplexionFisica === "Medio") {
+        } else if ((estadoPersona === "Normal") && (nivelImcComplexionFisica === "Medio") && (peso > pesoMinimo && peso < pesoMaximo)) {
             return "Normal"
-        } else if (estadoPersona === "Normal" && nivelImcComplexionFisica === "Medio" && nivelActividad === "alta") {
+        } else if (estadoPersona === "Normal" && (peso > pesoMinimo && peso < pesoMaximo) && nivelActividad === "alta") {
             return "Entrenada"
-        } else if (estadoPersona === "Flaca" && nivelImcComplexionFisica === "Bajo") {
+        } else if ((estadoPersona === "Flaca") && (nivelImcComplexionFisica === "Bajo") && (peso < pesoMinimo)) {
             return "Delgada"
         }
     }
