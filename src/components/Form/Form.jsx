@@ -376,14 +376,28 @@ const Form = () => {
         }
     }
 
+    // const calcularImcComplexionFisica = (imc) => {
+    //     console.log('Calculo de imc para complexion fisica', imc)
+
+    //     if (imc < 18.5) {
+    //         return 'Bajo'
+    //     } else if (imc >= 22.8 && imc < 32.95) {
+    //         return 'Medio'
+    //     } else {
+    //         return 'Alto'
+    //     }
+    // }
+
     const calcularImcComplexionFisica = (imc) => {
         console.log('Calculo de imc para complexion fisica', imc)
 
-        if (imc < 22.8) {
+        if (imc < 18.5) {
             return 'Bajo'
-        } else if (imc >= 22.8 && imc < 32.95) {
+        } else if (imc >= 18.5 && imc < 25) {
             return 'Medio'
-        } else {
+        } else if (imc >= 25 && imc < 30) {
+            return 'Sobrepeso'
+        } else if (imc >= 30) {
             return 'Alto'
         }
     }
@@ -396,12 +410,9 @@ const Form = () => {
 
         if (estadoPersona === "Obeso" && nivelImcComplexionFisica === "Alto") {
             return "Muy excedida"
-        } else if ((estadoPersona === "Sobrepeso") && (nivelImcComplexionFisica === "Alto")) {
+        } else if ((estadoPersona === "Sobrepeso") && (nivelImcComplexionFisica === "Sobrepeso")) {
             return "Sobrepeso"
-        } else if ((estadoPersona === "Sobrepeso") && (nivelImcComplexionFisica === "Medio")) {
-            return "Sobrepeso"
-        }
-        else if ((estadoPersona === "Normal") && nivelImcComplexionFisica === "Medio") {
+        } else if ((estadoPersona === "Normal") && nivelImcComplexionFisica === "Medio") {
             return "Normal"
         } else if (estadoPersona === "Normal" && nivelImcComplexionFisica === "Medio" && nivelActividad === "alta") {
             return "Entrenada"
