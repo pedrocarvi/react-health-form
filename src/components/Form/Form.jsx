@@ -405,7 +405,7 @@ const Form = () => {
 
         const { nivelActividad, peso } = datosUsuario
 
-        console.log('get complex fisica data', nivelImcComplexionFisica, ' ', estadoPersona)
+        console.log('get complex fisica data', nivelImcComplexionFisica, ' ', estadoPersona, ' ', pesoMinimo, ' ', pesoMaximo, ' ', nivelActividad, ' ', peso)
 
         if (estadoPersona === "Obeso" && nivelImcComplexionFisica === "Alto") {
             return "Muy excedida"
@@ -749,24 +749,25 @@ const Form = () => {
                     <div className='resultados-columna1'>
                         <div className='result-ctn' style={{
                             backgroundColor:
-                                formSent && resultados.imc < 18.5 ? '#F7BF09' : // amarillo
-                                    formSent && resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#008640' : // verde
-                                        formSent && resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F7BF09' :
-                                            formSent && resultados.imc >= 30 && resultados.imc <= 39.9 ? '#FF5E00' : // naranja
-                                                formSent && resultados.imc > 40 && 'red', color: '#000'
+                                formSent && resultados.imc < 18.5 ? '#53c9f7' : // celeste
+                                    formSent && resultados.imc >= 18.5 && resultados.imc <= 24.9 ? '#9bb50c' : // verde
+                                        formSent && resultados.imc >= 25 && resultados.imc <= 29.9 ? '#F9C801' :
+                                            formSent && resultados.imc >= 30 && resultados.imc <= 39.9 ? '#f58a20' : // naranja
+                                                formSent && resultados.imc > 40 ? '#f73f01' : '#D9D9D9'
+                            , color: '#000'
                         }}>
                             <div> <b> IMC (Indice de Masa Corporal): <span>{resultados.imc}</span> </b></div>
                         </div>
-                        <div className='result-ctn'>
+                        <div className='result-ctn result-metabolismo-basal'>
                             <div> <b> Metabolismo basal: </b> <span> {resultados.metabolismoBasal} </span> </div>
                         </div>
                         <div className='result-ctn' style={{
                             backgroundColor:
-                                resultados.estadoPersona === "Flaca" ? '#F7BF09' :
-                                    resultados.estadoPersona === "Normal" ? '#008640' :
-                                        resultados.estadoPersona === "Sobrepeso" ? '#FF5E00' :
-                                            resultados.estadoPersona === "Obeso" ? 'red' :
-                                                '#FFFFFF', color: '#000'
+                                resultados.estadoPersona === "Flaca" ? '#f9c801' :
+                                    resultados.estadoPersona === "Normal" ? '#9bb50c' :
+                                        resultados.estadoPersona === "Sobrepeso" ? '#f58a20' :
+                                            resultados.estadoPersona === "Obeso" ? '#f73f01' :
+                                                '#D9D9D9', color: '#000'
                         }}>
                             <div>
                                 <b> % De Grasa:{' '}
@@ -778,13 +779,19 @@ const Form = () => {
                         </div>
                     </div>
                     <div className="resultados-columna2">
-                        <div className='result-ctn'>
+                        <div className='result-ctn result-kg-musculo'>
                             <div> <b> Kg De Musculo: </b> {resultados.cantidadMusculo} </div>
                         </div>
-                        <div className='result-ctn'>
+                        <div className='result-ctn result-proteina-necesaria'>
                             <div> <b> Proteina diaria necesaria: </b> {resultados.proteinaNecesaria} gramos </div>
                         </div>
-                        <div className='result-ctn'>
+                        <div className='result-ctn result-hidratacion-diaria' style={{
+                            backgroundColor:
+                                litrosDia < resultados.hidratacionNecesaria ? '#f58a20' :
+                                    litrosDia === resultados.hidratacionNecesaria ? '#9bb50c' :
+                                        litrosDia > resultados.hidratacionNecesaria ? '#f9c801' :
+                                            '#D9D9D9', color: '#000'
+                        }}>
                             <div> <b> Hidratación diaria: </b> {resultados.hidratacionNecesaria} litros </div>
                         </div>
                     </div>

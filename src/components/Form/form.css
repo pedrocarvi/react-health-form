@@ -116,6 +116,7 @@ h4 {
   border: 1px solid #00000040;
   border-radius: 8px;
   gap: 12px;
+  background-color: #D9D9D9;
 }
 
 .result-ctn p {
