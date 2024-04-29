@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import InputMask from 'react-input-mask';
 import './form.css'
 // Imc images
 import menLowImcImage from '../../assets/men-lowimc.png'
@@ -639,9 +640,20 @@ const Form = () => {
                                 </div>
                                 {/* ALTURA */}
                                 <div className="form-group">
-                                    <label> Altura (cm) </label>
-                                    <input
+                                    <label> Altura <b> (en cm)</b> </label>
+                                    {/* <input
                                         type="number"
+                                        name="altura"
+                                        placeholder='Ingrese su altura (cm)'
+                                        className="form-control"
+                                        value={datosUsuario.altura}
+                                        onChange={handleChange}
+                                        autoComplete='off'
+                                    /> */}
+                                    <InputMask
+                                        mask="999" // Define la máscara como tres dígitos
+                                        maskChar={null} // Elimina el carácter de relleno
+                                        type="text" // Cambiado a texto para permitir la máscara
                                         name="altura"
                                         placeholder='Ingrese su altura (cm)'
                                         className="form-control"
@@ -898,9 +910,9 @@ const Form = () => {
                                     </p>
                                 )
                             }
-                            <br />
+                            {/* <br /> */}
                             {/* COMPLEXION FISICA */}
-                            {
+                            {/* {
                                 resultados.complexionFisica === "Delgada" && (
                                     <p>
                                         Tu <b> Complexión Física </b> es {resultados.complexionFisica}, tienes niveles de grasa y músculo bajos.En esta combinación predomina la insatisfacción por cómo te ves y como estas rindiendo en tus actividades. Por lo general hay falta de energía y concentración, bajo rendimiento físico y mental; el descanso siempre suele ser insuficiente sin importar las horas dormidas. Claramente es necesario elevar la masa grasa como la masa muscular y la solución nunca está en comer más, sino en cambiar la calidad de la alimentación, bajar el estrés y permitir que el cuerpo absorba mejor. Subir estos valores de manera saludable lleva más dedicación y tiempo si lo comparamos con las personas que buscan bajar de peso.
@@ -938,16 +950,34 @@ const Form = () => {
                             <br />
                             <div className='imcImage-container d-flex align-items-center w-100'>
                                 {<img src={resultados.complexionFisicaImage} alt="complexion fisica" className='imcImage' />}
-                            </div>
+                            </div> */}
                             <br />
                             {/* HIDRATACION */}
                             {litrosDia < resultados.hidratacionNecesaria ? (
                                 <p>
                                     La <b>hidratación</b> es fundamental para el funcionamiento óptimo de nuestro cuerpo. Hoy te hidratas con {litrosDia} litros y tu hidratación ideal es con {resultados.hidratacionNecesaria} litros diarios, por lo que debes tomar {(resultados.hidratacionNecesaria - litrosDia).toFixed(1)} litros al día para llegar al número ideal.
+                                    <br /> <br />
+                                    La cantidad de agua en el cuerpo es vital para numerosas funciones, incluyendo la
+                                    regulación de la temperatura corporal, el transporte de nutrientes y oxígeno a las
+                                    células, y la eliminación de desechos. Incluso síntomas como falta de concentración,
+                                    disminución de la energía o constipación pueden tener que ver con falta de hidratación
+                                    diaria.
+                                    <br /> <br />
+                                    <b> IMPORTANTE: </b> Si en tus planes está bajar de peso, la hidratación equilibrada no es
+                                    opcional, es absolutamente necesaria para este proceso.
                                 </p>
                             ) : (
                                 <p>
                                     La <b>Hidratación</b> es fundamental para el funcionamiento óptimo de nuestro cuerpo. No es necesario un ajuste en la cantidad y sigue con este hábito. ¡FELICITACIONES!
+                                    <br /> <br />
+                                    La cantidad de agua en el cuerpo es vital para numerosas funciones, incluyendo la
+                                    regulación de la temperatura corporal, el transporte de nutrientes y oxígeno a las
+                                    células, y la eliminación de desechos. Incluso síntomas como falta de concentración,
+                                    disminución de la energía o constipación pueden tener que ver con falta de hidratación
+                                    diaria.
+                                    <br /> <br />
+                                    <b> IMPORTANTE: </b> Si en tus planes está bajar de peso, la hidratación equilibrada no es
+                                    opcional, es absolutamente necesaria para este proceso.
                                 </p>
                             )}
 
